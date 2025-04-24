@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+      Project for 3403 Project Group 10
+    -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3403 Project Group 10</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+      <div class="navbar__container">
+        <a href="/" id="navbar__logo"><i class="fa-solid fa-weight-scale"></i>&nbsp;FitTrack</a>
+        <div class="navbar__toggle" id="mobile-menu">
+          <span class="bar"></span> <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+        <ul class="navbar__menu">
+          <li class="navbar__item">
+            <a href="/" class="navbar__links">Home</a>
+          </li>
+          <li class="navbar__item">
+            <a href="/tech.html" class="navbar__links">...</a>
+          </li>
+          <li class="navbar__item">
+            <a href="/" class="navbar__links">...</a>
+          </li>
+          <li class="navbar__btn"><a href="/" class="button">Sign Up</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="main">
+      <div class="main__container">
+        <div class="main__content">
+          <h1>MANAGE</h1>
+          <h2>YOUR WEIGHT</h2>
+          <p>See what makes up different.</p>
+          <button class="main__btn"><a href="#">Get Started</a></button>
+        </div>
+        <div class="main__img--container">
+          <img id="main__img" src="{{ url_for('static', filename='images/pic_1.png') }}" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Services Section -->
+    <div class="services">
+      <h1>Start today's management!</h1>
+      <div class="services__container">
+        <div class="services__card">
+          <img src="{{ url_for('static', filename='images/weight.png') }}" alt="weight icon" class="services__img" />
+          <h2>Record the weight</h2>
+          <p>Keep the habit!</p>
+          <button>Start record</button>
+        </div>
+        <div class="services__card">
+          <img src="{{ url_for('static', filename='images/report.png') }}" alt="report icon" class="services__img" />
+          <h2>Check the report</h2>
+          <p>See your progress!</p>
+          <button>Check</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record Section -->
+    <div class="record">
+      <h1>Record Your Data</h1>
+      <p>Keep track of your health data to generate meaningful insights.</p>
+      <form class="record__form" id="recordForm" method="POST" action="/submit">
+        
+        <!-- 日期 -->
+        <div class="record__group">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required />
+        </div>
+
+        <!-- 体重 -->
+        <div class="record__group">
+          <label for="weight">Today's Weight (kg)</label>
+          <input type="number" id="weight" name="weight" placeholder="e.g. 68.5" required />
+        </div>
+
+        <!-- 饮食记录 -->
+        <div class="record__group">
+          <label class="tooltip-container">
+            Meals
+            <i class="fa-solid fa-circle-info tooltip-icon"></i>
+            <span class="custom-tooltip">
+              If you skipped a meal,<br>
+              type "NO". <br>
+              <br>
+              Leaving it blank will <br>
+              auto-fill a default value.<br>
+            </span>
+          </label>
+          <input type="text" name="breakfast" placeholder="Breakfast: e.g. oats and egg" />
+          <input type="text" name="lunch" placeholder="Lunch: e.g. rice and fish" />
+          <input type="text" name="dinner" placeholder="Dinner: e.g. noodles and soup" />
+        </div>
+
+        <!-- 运动记录 -->
+        <div class="record__group">
+          <label class="tooltip-container">
+            Exercise Activities
+            <i class="fa-solid fa-circle-info tooltip-icon"></i>
+            <span class="custom-tooltip">
+              Light: 10–30 min<br>
+              Moderate: 30–60 min<br>
+              Intense: 60+ min
+            </span>
+          </label>
+                
+          <div id="exerciseContainer">
+            <div class="exercise__entry">
+              <input type="text" name="exercise[]" placeholder="e.g. running" />
+              <select name="intensity[]">
+                <option value="">Intensity</option>
+                <option value="light">Light</option>
+                <option value="moderate">Moderate</option>
+                <option value="intense">Intense</option>
+              </select>
+              <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
+            </div>            
+          </div>
+          <button type="button" class="add-exercise-btn" onclick="addExerciseRow()">+ Add</button>
+        </div>
+
+        <!-- 提交 -->
+        <button type="submit" class="record__btn">Submit Record</button>
+      </form>
+    </div>
+
+
+
+    <!-- Reports Section -->
+    <div class="reports">
+      <h1>My Report</h1>
+      <div class="reports__container">
+        <div class="reports__card">
+          <img src="{{ url_for('static', filename='images/weight.png') }}" alt="weight icon" class="services__img" />
+          <h2>Weight report</h2>
+          <p>See how the weight change!</p>
+          <button>Start record</button>
+        </div>
+        <div class="reports__card">
+          <img src="{{ url_for('static', filename='images/report.png') }}" alt="report icon" class="services__img" />
+          <h2>Diet&Exercise report</h2>
+          <p>Is your lifestyle reasonable?</p>
+          <button>Check</button>
+        </div>
+        <div class="reports__card">
+          <img src="{{ url_for('static', filename='images/report.png') }}" alt="report icon" class="services__img" />
+          <h2>Analysis</h2>
+          <p>Analyze and improve</p>
+          <button>Check</button>
+        </div>
+      </div>
+    </div>
+
+
+  
+
+
+   
+  </body>
+</html>
+
+
+<script>
+  function addExerciseRow() {
+    const container = document.getElementById("exerciseContainer");
+    const row = document.createElement("div");
+    row.classList.add("exercise__entry");
+  
+    row.innerHTML = `
+      <input type="text" name="exercise[]" placeholder="e.g. swimming" />
+      <select name="intensity[]">
+        <option value="">Intensity</option>
+        <option value="light">Light</option>
+        <option value="moderate">Moderate</option>
+        <option value="intense">Intense</option>
+      </select>
+      <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
+    `;
+  
+    container.appendChild(row);
+  }
+  
+  function removeThisRow(button) {
+    const row = button.parentNode;
+    const container = document.getElementById("exerciseContainer");
+    if (container.children.length > 1) {
+      container.removeChild(row);
+    } else {
+      alert("At least one activity must remain.");
+    }
+  }
+  </script>
+  
+  
