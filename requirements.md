@@ -14,6 +14,11 @@
 - Username
 - Password
 
+- Age (Date of Birth)
+- Height
+- Initial Weight
+- Target Weight
+
 ---
 
 ## Upload Data View
