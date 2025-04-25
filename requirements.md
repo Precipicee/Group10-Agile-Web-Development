@@ -29,27 +29,20 @@
 
 ## Pending Features
 
-### 1. Data Analysis Module
-#### A. Weight Analysis
+### 1. Weight Analysis
 - Analyze user weight trends.
 - Predict the estimated date to reach the target weight.
 
-#### B. Diet and Exercise Analysis
+### 2. Diet and Exercise Analysis
 - Evaluate if the diet and exercise patterns are healthy.
 - AI API may be used to generate personalized suggestions.
 
-#### C. Combined Analysis (Weight + Habit)
+### 3. Combined Analysis (Weight + Habit)
 - Correlate weight change with exercise and diet habits.
 - E.g., check if stagnation in weight loss is due to reduced physical activity or diet issues.
 - Consider using AI API for comprehensive pattern analysis.
 
-### 2. Analysis Display Page (Frontend)
-- Design a dedicated page for showing analysis results with charts and AI feedback.
-- Support paginated view of analysis history and allow re-analysis using a button.
-
-### 3. Backend Logic for Analysis
-- Implement backend logic to collect and send user data to AI API.
-- Add caching and error handling to avoid repeat requests and handle API failures.
+### 4. share
 
 ---
 
@@ -57,5 +50,4 @@
 
 - Health score evaluation system.
 - Export personal monthly report or health summary as PDF.
-- Data sharing via email or social media.
 - Etc.
