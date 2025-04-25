@@ -104,16 +104,25 @@ def basicinfo():
 
     username = temp_user['username']
     password = temp_user['password']
-    age = request.form.get('age')
+    birthday_str = request.form.get('birthday')
     gender = request.form.get('gender')
     height = request.form.get('height')
     current_weight = request.form.get('current_weight')
     target_weight = request.form.get('target_weight')
     avatar = request.form.get('avatar')
 
-    if not all([age, gender, height, current_weight, target_weight, avatar]):
+    if not all([birthday_str, gender, height, current_weight, target_weight, avatar]):
         return jsonify({'status': 'error', 'message': 'All fields required'})
 
+    # age
+    try:
+        birthday = datetime.strptime(birthday_str, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+    except:
+        return jsonify({'status': 'error', 'message': 'Invalid birthday format'})
+
+    # BMI
     try:
         height_m = float(height) / 100
         weight_reg = float(current_weight)
@@ -125,36 +134,35 @@ def basicinfo():
         conn = sqlite3.connect(DATABASE)
         c = conn.cursor()
 
-        
+        # check
         c.execute("PRAGMA table_info(users)")
         columns = [col[1] for col in c.fetchall()]
         required_fields = [
-            'age', 'gender', 'height', 'current_weight', 'target_weight',
+            'birthday', 'age', 'gender', 'height', 'current_weight', 'target_weight',
             'avatar', 'weight_reg', 'bmi_reg', 'bmi_now', 'register_date'
         ]
         for field in required_fields:
             if field not in columns:
                 c.execute(f"ALTER TABLE users ADD COLUMN {field} TEXT")
 
-        # register data
-        register_date = datetime.now().strftime("%Y/%m/%d")
+        #
+        register_date = datetime.now().strftime("%Y-%m-%d")
 
         # info
         c.execute("""
             INSERT INTO users (
-                username, password, age, gender, height, current_weight,
+                username, password, birthday, age, gender, height, current_weight,
                 target_weight, avatar, weight_reg, bmi_reg, bmi_now, register_date
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            username, password, age, gender, height, current_weight,
+            username, password, birthday_str, age, gender, height, current_weight,
             target_weight, avatar, weight_reg, bmi, bmi, register_date
         ))
 
-        # get user_id
+        # 获取 user_id 写入 daily_records
         c.execute("SELECT id FROM users WHERE username = ?", (username,))
         user_id = c.fetchone()[0]
 
-        # input daily_records
         c.execute("""
             INSERT INTO daily_records (user_id, date, weight)
             VALUES (?, ?, ?)
@@ -174,6 +182,7 @@ def basicinfo():
 
 
 
+
 @app.route('/profile_data')
 def profile_data():
     username = session.get('user')
@@ -185,9 +194,10 @@ def profile_data():
 
     # get info
     c.execute("""
-        SELECT id, username, avatar, age, gender, height, weight_reg, target_weight, bmi_reg, bmi_now, register_date
+        SELECT id, username, avatar, birthday, age, gender, height, weight_reg, target_weight, bmi_reg, bmi_now, register_date
         FROM users WHERE username = ?
     """, (username,))
+
     user = c.fetchone()
 
     if not user:
@@ -210,16 +220,18 @@ def profile_data():
     data = {
         'username': user[1],
         'avatar': user[2] or '',
-        'age': user[3] or '',
-        'gender': user[4] or '',
-        'height': user[5] or '',
-        'weight_reg': user[6] or '',
+        'birthday': user[3] or '',
+        'age': user[4] or '',
+        'gender': user[5] or '',
+        'height': user[6] or '',
+        'weight_reg': user[7] or '',
         'current_weight': current_weight,
-        'target_weight': user[7] or '',
-        'bmi_reg': user[8] or '',
-        'bmi_now': user[9] or '',
-        'register_date': user[10] or ''
+        'target_weight': user[8] or '',
+        'bmi_reg': user[9] or '',
+        'bmi_now': user[10] or '',
+        'register_date': user[11] or ''
     }
+
     return jsonify({'status': 'success', 'data': data})
 
 @app.route('/add_record', methods=['POST'])
@@ -361,6 +373,71 @@ def weight_data():
 
     data = [{'date': row[0], 'weight': row[1]} for row in rows]
     return jsonify({'status': 'success', 'data': data})
+
+@app.route('/update_profile_fields', methods=['POST'])
+def update_profile_fields():
+    username = session.get('user')
+    if not username:
+        return jsonify({'status': 'error', 'message': 'Not logged in'})
+
+    data = request.get_json(force=True)
+
+    # debug 
+    debug_info = {
+        'raw_data': data,
+        'birthday': data.get('birthday'),
+        'gender': data.get('gender'),
+        'height': data.get('height'),
+        'weight_reg': data.get('weight_reg'),
+        'target_weight': data.get('target_weight'),
+    }
+
+    birthday_str = data.get('birthday', '').strip()
+    gender = data.get('gender', '').strip()
+    height = data.get('height')
+    weight_reg = data.get('weight_reg')
+    target_weight = data.get('target_weight')
+
+    if not birthday_str:
+        return jsonify({'status': 'error', 'message': 'Birthday cannot be empty.1', 'debug': debug_info})
+    if height is None or weight_reg is None:
+        return jsonify({'status': 'error', 'message': 'Missing height or weight_reg', 'debug': debug_info})
+
+    try:
+        # birthday to age
+        birthday = datetime.strptime(birthday_str, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+
+        # BMI
+        height_m = float(height) / 100
+        bmi = round(float(weight_reg) / (height_m ** 2), 2)
+
+        conn = sqlite3.connect(DATABASE)
+        c = conn.cursor()
+        c.execute("""
+            UPDATE users SET
+                birthday = ?,
+                gender = ?,
+                height = ?,
+                weight_reg = ?,
+                target_weight = ?,
+                age = ?,
+                bmi_reg = ?,
+                bmi_now = ?
+            WHERE username = ?
+        """, (birthday_str, gender, height, weight_reg, target_weight, age, bmi, bmi, username))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({'status': 'success', 'age': age, 'bmi': bmi})
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e), 'debug': debug_info})
+
+
+
 
 
 @app.route('/logout')
