@@ -27,7 +27,7 @@
 
 ---
 
-## Pending Features
+## In progress Features
 
 ### 1. Weight Analysis
 - Analyze user weight trends.
