@@ -42,7 +42,8 @@
 - E.g., check if stagnation in weight loss is due to reduced physical activity or diet issues.
 - Consider using AI API for comprehensive pattern analysis.
 
-### 4. share
+### 4. Share Data View
+- Share with User Feature
 
 ---
 
