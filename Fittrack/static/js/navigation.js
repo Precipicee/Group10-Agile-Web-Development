@@ -135,32 +135,115 @@ function setupEventListeners(page) {
     });
   }
 
-  // === Profile Page ===
-  if (page === "profile") {
-    fetch("/profile_data")
-      .then(res => res.json())
-      .then(result => {
-        if (result.status !== "success") {
-          alert("Failed to load profile");
-          return;
+// === Profile Page ===
+if (page === "profile") {
+  fetch("/profile_data")
+    .then(res => res.json())
+    .then(result => {
+      if (result.status !== "success") {
+        alert("Failed to load profile");
+        return;
+      }
+
+      const data = result.data;
+      document.getElementById("profile-username").textContent = data.username || "";
+      document.getElementById("profile-avatar").src = data.avatar
+        ? `/static/userimages/${data.avatar}`
+        : "/static/userimages/default.png";
+      document.getElementById("profile-birthday").textContent = data.birthday || "-";
+      document.getElementById("profile-age").textContent = data.age || "-";
+      document.getElementById("profile-gender").textContent = data.gender || "-";
+      document.getElementById("profile-height").textContent = data.height ? `${data.height} cm` : "-";
+      document.getElementById("profile-weight-reg").textContent = data.weight_reg ? `${data.weight_reg} kg` : "-";
+      document.getElementById("profile-register-date").textContent = data.register_date || "-";
+      document.getElementById("profile-weight-now").textContent = data.current_weight ? `${data.current_weight} kg` : "-";
+      document.getElementById("profile-weight-target").textContent = data.target_weight ? `${data.target_weight} kg` : "-";
+      document.getElementById("profile-bmi-reg").textContent = data.bmi_reg || "-";
+      document.getElementById("profile-bmi-now").textContent = data.bmi_now || "-";
+
+      window.profileOriginalData = data;
+    });
+
+  const editableFields = [
+    { id: "profile-birthday", type: "date" },
+    { id: "profile-gender", type: "select" },
+    { id: "profile-height", type: "number", unit: " cm" },
+    { id: "profile-weight-reg", type: "number", unit: " kg" },
+    { id: "profile-weight-target", type: "number", unit: " kg" }
+  ];
+
+  const editBtn = document.getElementById("edit-profile-btn");
+  editBtn.addEventListener("click", async () => {
+    const editing = editBtn.textContent === "✏️";
+    editBtn.textContent = editing ? "💾" : "✏️";
+
+    if (editing) {
+      // input
+      editableFields.forEach(field => {
+        const container = document.getElementById(field.id);
+        const key = field.id.replace("profile-", "").replace(/-/g, "_");
+        const value = window.profileOriginalData[key] || "";
+
+        let input;
+        if (field.type === "select") {
+          input = document.createElement("select");
+          ["Male", "Female", "Other"].forEach(opt => {
+            const option = document.createElement("option");
+            option.value = opt;
+            option.textContent = opt;
+            if (opt === value) option.selected = true;
+            input.appendChild(option);
+          });
+        } else {
+          input = document.createElement("input");
+          input.type = field.type;
+          input.value = typeof value === "string"
+            ? value.replace(field.unit || "", "").trim()
+            : value;
         }
 
-        const data = result.data;
-        document.getElementById("profile-username").textContent = data.username || "";
-        document.getElementById("profile-avatar").src = data.avatar
-          ? `/static/userimages/${data.avatar}`
-          : "/static/userimages/default.png";
-        document.getElementById("profile-age").textContent = data.age || "-";
-        document.getElementById("profile-gender").textContent = data.gender || "-";
-        document.getElementById("profile-weight-reg").textContent = data.weight_reg ? `${data.weight_reg} kg` : "-";
-        document.getElementById("profile-register-date").textContent = data.register_date || "-";
-        document.getElementById("profile-weight-now").textContent = data.current_weight ? `${data.current_weight} kg` : "-";
-        document.getElementById("profile-weight-target").textContent = data.target_weight ? `${data.target_weight} kg` : "-";
-        document.getElementById("profile-bmi-reg").textContent = data.bmi_reg || "-";
-        document.getElementById("profile-bmi-now").textContent = data.bmi_now || "-";
-
+        input.className = "profile-edit-input";
+        container.innerHTML = "";
+        container.appendChild(input);
       });
-  }
+
+    } else {
+      // Save: Read the input box value
+      const payload = {};
+
+      editableFields.forEach(field => {
+        const input = document.querySelector(`#${field.id} input, #${field.id} select`);
+        if (input) {
+          let val = input.value.trim();
+          if (field.type === "number") val = parseFloat(val);
+          payload[field.id.replace("profile-", "").replace(/-/g, "_")] = val;
+        }
+      });
+
+      alert("Data to upload - for debug:\n" + JSON.stringify(payload, null, 2));
+
+      const res = await fetch("/update_profile_fields", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+      if (result.status === "success") {
+        alert("save successful！ - for debug");
+        loadPage("profile");
+      } else {
+        alert("fail to save - for debug: " + result.message);
+      }
+    }
+  });
+}
+
+
+
+
+
+
 
 // === Upload Page ===
 if (page === "upload") {
