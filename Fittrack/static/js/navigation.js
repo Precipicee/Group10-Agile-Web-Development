@@ -160,17 +160,24 @@ if (page === "profile") {
       document.getElementById("profile-weight-target").textContent = data.target_weight ? `${data.target_weight} kg` : "-";
       document.getElementById("profile-bmi-reg").textContent = data.bmi_reg || "-";
       document.getElementById("profile-bmi-now").textContent = data.bmi_now || "-";
-
+      document.getElementById("profile-target-weight-days").textContent = data.target_weight_time_days || "-";
+      document.getElementById("profile-exercise-weekly").textContent = data.target_exercise_time_per_week || "-";
+      document.getElementById("profile-exercise-days").textContent = data.target_exercise_timeframe_days || "-";
+      
       window.profileOriginalData = data;
     });
 
   const editableFields = [
-    { id: "profile-birthday", type: "date" },
-    { id: "profile-gender", type: "select" },
-    { id: "profile-height", type: "number", unit: " cm" },
-    { id: "profile-weight-reg", type: "number", unit: " kg" },
-    { id: "profile-weight-target", type: "number", unit: " kg" }
+    { id: "profile-birthday", key: "birthday", type: "date" },
+    { id: "profile-gender", key: "gender", type: "select" },
+    { id: "profile-height", key: "height", type: "number", unit: " cm" },
+    { id: "profile-weight-reg", key: "weight_reg", type: "number", unit: " kg" },
+    { id: "profile-weight-target", key: "target_weight", type: "number", unit: " kg" },
+    { id: "profile-target-weight-days", key: "target_weight_time_days", type: "number" },
+    { id: "profile-exercise-weekly", key: "target_exercise_time_per_week", type: "number" },
+    { id: "profile-exercise-days", key: "target_exercise_timeframe_days", type: "number" }
   ];
+    
 
   const editBtn = document.getElementById("edit-profile-btn");
   editBtn.addEventListener("click", async () => {
@@ -178,11 +185,10 @@ if (page === "profile") {
     editBtn.textContent = editing ? "💾" : "✏️";
 
     if (editing) {
-      // input
+      // Switch to editing mode
       editableFields.forEach(field => {
         const container = document.getElementById(field.id);
-        const key = field.id.replace("profile-", "").replace(/-/g, "_");
-        const value = window.profileOriginalData[key] || "";
+        const value = window.profileOriginalData[field.key];
 
         let input;
         if (field.type === "select") {
@@ -197,9 +203,7 @@ if (page === "profile") {
         } else {
           input = document.createElement("input");
           input.type = field.type;
-          input.value = typeof value === "string"
-            ? value.replace(field.unit || "", "").trim()
-            : value;
+          input.value = value != null ? value : "";
         }
 
         input.className = "profile-edit-input";
@@ -208,7 +212,7 @@ if (page === "profile") {
       });
 
     } else {
-      // Save: Read the input box value
+      // Save mode
       const payload = {};
 
       editableFields.forEach(field => {
@@ -216,7 +220,7 @@ if (page === "profile") {
         if (input) {
           let val = input.value.trim();
           if (field.type === "number") val = parseFloat(val);
-          payload[field.id.replace("profile-", "").replace(/-/g, "_")] = val;
+          payload[field.key] = val;
         }
       });
 
@@ -234,10 +238,13 @@ if (page === "profile") {
         loadPage("profile");
       } else {
         alert("fail to save - for debug: " + result.message);
+        console.error(result.debug); 
       }
     }
   });
 }
+
+
 
 
 
@@ -255,9 +262,10 @@ if (page === "upload") {
     const container = document.getElementById("exerciseContainer");
     const row = document.createElement("div");
     row.classList.add("exercise__entry");
-
+  
     row.innerHTML = `
       <input type="text" name="exercise[]" placeholder="e.g. swimming" />
+      <input type="number" name="duration[]" placeholder="Duration (min)" min="1" />
       <select name="intensity[]">
         <option value="">Intensity</option>
         <option value="light">Light</option>
@@ -266,9 +274,10 @@ if (page === "upload") {
       </select>
       <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
     `;
-
+  
     container.appendChild(row);
   }
+  
 
   // delete
   function removeThisRow(button) {
@@ -285,18 +294,20 @@ if (page === "upload") {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    
     const exercises = document.getElementsByName("exercise[]");
+    const durations = document.getElementsByName("duration[]");
     const intensities = document.getElementsByName("intensity[]");
     let combined = [];
 
     for (let i = 0; i < exercises.length; i++) {
       const name = exercises[i].value.trim();
+      const duration = durations[i].value.trim();
       const level = intensities[i].value.trim();
-      if (name) {
-        combined.push(`${name} (${level || 'unknown'})`);
+      if (name && duration) {
+        combined.push(`${name} (${duration}min, ${level || 'unknown'})`);
       }
     }
+
 
     const formData = new FormData(form);
     formData.set("exercise", combined.join("; "));
