@@ -43,6 +43,25 @@
       <input type="number" name="target_weight" required class="form-input" />
     </div>
 
+    <!-- Target Time to Reach Weight -->
+    <div class="form-group">
+      <label class="form-label" for="target_weight_time_days">Target Time to Reach Weight (days)</label>
+      <input type="number" name="target_weight_time_days" min="1" class="form-input" />
+    </div>
+
+    <!-- Weekly Exercise Target -->
+    <div class="form-group">
+      <label class="form-label" for="target_exercise_time_per_week">Exercise Time per Week (minutes)</label>
+      <input type="number" name="target_exercise_time_per_week" min="0" class="form-input" />
+    </div>
+
+    <!-- Total Exercise Plan Duration -->
+    <div class="form-group">
+      <label class="form-label" for="target_exercise_timeframe_days">Exercise Plan Duration (days)</label>
+      <input type="number" name="target_exercise_timeframe_days" min="1" class="form-input" />
+    </div>
+
+
     <!-- Submit -->
     <button type="submit" class="form-button">Submit Profile</button>
   </form>

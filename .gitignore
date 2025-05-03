@@ -1,2 +1,12 @@
+venv/
 application-env/
+
 __pycache__/
+*.pyc
+
+*.log
+
+.DS_Store
+
+.env
+
