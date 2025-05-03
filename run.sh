@@ -9,5 +9,8 @@ fi
 # Activate the venv.
 source application-env/bin/activate
 
-# Run the application.
-python3 weather.py
+# Install dependencies if needed
+pip install -r requirements.txt
+
+# Run the Flask app
+python3 run.py
