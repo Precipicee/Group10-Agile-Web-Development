@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, session, render_template, redirect, url_for
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
-from app.models import User, DailyRecord, DailyExercise
+from . import db
+from .models import User, DailyRecord, DailyExercise
 
 
 DATABASE = 'users.db'
