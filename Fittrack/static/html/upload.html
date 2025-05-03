@@ -38,15 +38,17 @@
         Exercise Activities
         <i class="fa-solid fa-circle-info tooltip-icon"></i>
         <span class="custom-tooltip">
-          Light: 10–30 min<br>
-          Moderate: 30–60 min<br>
-          Intense: 60+ min
+          • Light: slow pace, frequent rests<br>
+          • Moderate: steady effort, some breaks<br>
+          • Intense: high pace, sustained effort, minimal rest
         </span>
+        
       </label>
 
       <div id="exerciseContainer">
         <div class="exercise__entry">
           <input type="text" name="exercise[]" placeholder="e.g. running" />
+          <input type="number" name="duration[]" placeholder="Duration (min)" min="1" />
           <select name="intensity[]">
             <option value="">Intensity</option>
             <option value="light">Light</option>
@@ -54,7 +56,7 @@
             <option value="intense">Intense</option>
           </select>
           <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
-        </div>
+        </div>        
       </div>
       <button type="button" class="add-exercise-btn" onclick="addExerciseRow()">+ Add</button>
 
