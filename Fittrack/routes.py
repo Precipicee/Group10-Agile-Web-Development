@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, render_template, redirect, url_for
+from flask import Flask, request, jsonify, session, render_template, redirect, url_for, send_from_directory
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -295,6 +295,7 @@ def register_routes(app):
         try:
             record_date = datetime.strptime(date_str, "%Y-%m-%d").date()
 
+            # get record
             record = DailyRecord.query.filter_by(user_id=user.user_id, date=record_date).first()
             if not record:
                 return jsonify({'status': 'error', 'message': 'Record not found'})
@@ -304,9 +305,37 @@ def register_routes(app):
             record.breakfast = breakfast
             record.lunch = lunch
             record.dinner = dinner
-            # record.exercise = exercise  # 
 
-            # Synchronously update the registered weight
+            # Use record_id to delete all exercise records of the day
+            old_exercises = DailyExercise.query.filter_by(record_id=record.record_id).all()
+            for old in old_exercises:
+                db.session.delete(old)
+
+            # Insert a new exercise record
+            if exercise:
+                entries = exercise.split(";")
+                for entry in entries:
+                    entry = entry.strip()
+                    if not entry:
+                        continue
+                    try:
+                        name_part, rest = entry.split("(", 1)
+                        name = name_part.strip()
+                        rest = rest.replace(")", "").strip()
+                        duration_str, intensity = [r.strip() for r in rest.split(",")]
+                        duration = int(duration_str.replace("min", "").strip())
+
+                        new_exercise = DailyExercise(
+                            record_id=record.record_id,
+                            exercise_type=name,
+                            exercise_duration_minutes=duration,
+                            exercise_intensity=intensity
+                        )
+                        db.session.add(new_exercise)
+                    except Exception as e:
+                        print(f"[WARN] Failed to parse exercise entry: {entry}", e)
+
+            # Synchronous registration of the same-day weight
             try:
                 reg_date_obj = datetime.strptime(user.register_date, "%Y-%m-%d").date()
                 if record_date == reg_date_obj:
@@ -316,10 +345,11 @@ def register_routes(app):
                     user.bmi_reg = bmi
                     user.bmi_now = bmi
             except Exception as e:
-                print("[WARN] Failed to register weight synchronization in update_record:", e)
+                print("[WARN] BMI sync failed:", e)
 
             db.session.commit()
             return jsonify({'status': 'success', 'message': 'Record updated'})
+
         except Exception as e:
             db.session.rollback()
             return jsonify({'status': 'error', 'message': str(e)})
@@ -470,6 +500,104 @@ def register_routes(app):
             return jsonify({'status': 'success', 'age': age, 'bmi': bmi})
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e), 'debug': debug_info})
+
+
+    @app.route("/history")
+    def view_history():
+        return send_from_directory("static/html", "history.html")
+
+    @app.route('/get_today_record')
+    def get_today_record():
+        user_id = session.get('user_id')
+        if not user_id:
+            return jsonify({'status': 'error', 'message': 'Not logged in'}), 401
+
+        today = date.today()
+
+        record = DailyRecord.query.filter_by(user_id=user_id, date=today).first()
+        if not record:
+            return jsonify({'status': 'empty'})  # No record today
+
+        exercises = DailyExercise.query.filter_by(record_id=record.record_id).all()
+        exercise_data = [
+            {
+                'type': ex.exercise_type,
+                'duration': ex.exercise_duration_minutes,
+                'intensity': ex.exercise_intensity
+            }
+            for ex in exercises
+        ]
+
+        return jsonify({
+            'status': 'success',
+            'data': {
+                'weight': record.weight,
+                'breakfast': record.breakfast,
+                'lunch': record.lunch,
+                'dinner': record.dinner,
+                'exercises': exercise_data
+            }
+        })
+
+
+    @app.route('/record_details/<date>')
+    def get_record_details(date):
+        if 'user' not in session:
+            return jsonify({"status": "error", "message": "User not logged in"}), 401
+
+        try:
+            user = User.query.filter_by(username=session['user']).first()
+            if not user:
+                return jsonify({"status": "error", "message": "User not found"}), 404
+
+            parsed_date = datetime.strptime(date, "%Y-%m-%d").date()
+            record = DailyRecord.query.filter_by(user_id=user.user_id, date=parsed_date).first()
+            if not record:
+                return jsonify({"status": "empty", "message": "No record for selected date"})
+
+            # Extract all records of the day
+            exercises = DailyExercise.query.filter_by(record_id=record.record_id).all()
+
+            # Debug 
+            print(f"[DEBUG] user_id={user.user_id}, date={parsed_date}, record_id={record.record_id}")
+            for ex in exercises:
+                print(f"[DEBUG] Exercise - type: {ex.exercise_type}, duration: {ex.exercise_duration_minutes}, intensity: {ex.exercise_intensity}")
+
+            # Format and return
+            exercise_data = [{
+                "type": ex.exercise_type,
+                "duration": ex.exercise_duration_minutes,
+                "intensity": ex.exercise_intensity
+            } for ex in exercises]
+
+            return jsonify({
+                "status": "success",
+                "data": {
+                    "weight": record.weight,
+                    "breakfast": record.breakfast or "N/A",
+                    "lunch": record.lunch or "N/A",
+                    "dinner": record.dinner or "N/A",
+                    "exercises": exercise_data
+                }
+            })
+
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+
+    # Return all dates for calendar annotation
+    @app.route('/record_dates')
+    def get_record_dates():
+        if 'user' not in session:
+            return jsonify({'status': 'error', 'message': 'Not logged in'}), 401
+
+        user = User.query.filter_by(username=session['user']).first()
+        if not user:
+            return jsonify({'status': 'error', 'message': 'User not found'}), 404
+
+        records = DailyRecord.query.filter_by(user_id=user.user_id).all()
+        date_list = [r.date.strftime("%Y-%m-%d") for r in records]
+
+        return jsonify({'status': 'success', 'dates': date_list})
 
 
 
