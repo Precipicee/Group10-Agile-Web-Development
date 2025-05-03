@@ -220,7 +220,7 @@
 }
 
 
-/* Auth Section (Sign In / Sign Up) */
+/* Auth Section (Sign In / Sign Up / Basic Info) */
 .auth {
   background-color: #fffbea;
   padding: 60px 20px;
@@ -238,30 +238,63 @@
 .auth form {
   background-color: #ffffff;
   padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.auth form label {
-  display: block;
+.auth .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth label.form-label {
   margin-bottom: 6px;
-  font-weight: bold;
+  font-weight: 600;
   color: #333;
+  font-size: 0.95rem;
 }
 
-.auth form input[type="text"],
-.auth form input[type="password"] {
+.auth input[type="text"],
+.auth input[type="email"],
+.auth input[type="password"],
+.auth input[type="date"],
+.auth input[type="number"],
+.auth select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 5px;
+  padding: 10px 12px;
   border: 1px solid #ccc;
-  font-size: 1rem;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.auth form input[type="checkbox"] {
+.auth input:focus,
+.auth select:focus {
+  border-color: #fe5196;
+  box-shadow: 0 0 0 2px rgba(254, 81, 150, 0.15);
+  outline: none;
+}
+
+.gender-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.gender-group label {
+  font-weight: normal;
+}
+
+.auth input[type="radio"] {
+  margin-right: 6px;
+}
+
+.auth input[type="checkbox"] {
   margin-right: 8px;
 }
 
@@ -273,16 +306,17 @@
   border: none;
   color: white;
   border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .auth form button:hover {
-  background: #4837ff;
+  background-image: linear-gradient(to right, #7c4dff, #5f27cd);
 }
 
 .auth p {
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   font-size: 0.95rem;
   text-align: center;
   color: #555;
@@ -291,11 +325,13 @@
 .auth a {
   color: #4837ff;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .auth a:hover {
   text-decoration: underline;
 }
+
 
 /* avatar */
 .avatar-grid {
@@ -326,6 +362,7 @@
   box-shadow: 0 0 8px #00c9ff;
 }
 
+/* profile */
 /* profile */
 .profile {
   background-color: #fffbea;
@@ -416,6 +453,8 @@
 .form-button:hover {
   background: #4837ff;
 }
+
+
 
 
 
