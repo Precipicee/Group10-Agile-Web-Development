@@ -75,3 +75,28 @@ class DailyExercise(db.Model):
             name='valid_exercise_intensity'
         ),
     )
+
+class FriendRequest(db.Model):
+    __tablename__ = 'friend_request'
+
+    id = db.Column(db.Integer, primary_key=True)
+    from_user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    to_user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='pending')  # 'pending', 'accepted', 'rejected'
+
+    from_user = db.relationship('User', foreign_keys=[from_user_id], backref='sent_friend_requests')
+    to_user = db.relationship('User', foreign_keys=[to_user_id], backref='received_friend_requests')
+
+
+class SharedAnalysis(db.Model):
+    __tablename__ = 'shared_analysis'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    image_path = db.Column(db.String(200))  # Path to the analysis image
+    description = db.Column(db.Text)        # Optional description
+    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='shared_analyses_sent')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='shared_analyses_received')
