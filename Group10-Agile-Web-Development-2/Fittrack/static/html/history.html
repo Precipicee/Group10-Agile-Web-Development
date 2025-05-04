@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>History</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .record {
+      padding: 40px 20px;
+    }
+  
+    .history__layout {
+      display: flex;
+      gap: 40px;
+      padding-top: 20px;
+    }
+  
+    #calendar {
+      flex: 1;
+      max-width: 60%;
+    }
+  
+    #recordDetails {
+      flex: 1;
+      padding: 20px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+  
+    /* table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      table-layout: fixed;
+    }
+  
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ccc;
+      word-wrap: break-word;
+    }
+  
+    th {
+      background-color: #f0f0f0;
+    }
+  
+    /* General record details table: label-content */
+    #recordDetails table.details-table th:first-child,
+    #recordDetails table.details-table td:first-child {
+      width: 200px;
+    }
+  
+    #recordDetails table.details-table th:nth-child(2),
+    #recordDetails table.details-table td:nth-child(2) {
+      width: 300px;
+    }
+  
+    /* Exercise  */
+    #recordDetails table.exercise-table th:nth-child(1),
+    #recordDetails table.exercise-table td:nth-child(1) {
+      width: 35%;
+    }
+  
+    #recordDetails table.exercise-table th:nth-child(2),
+    #recordDetails table.exercise-table td:nth-child(2) {
+      width: 25%;
+    }
+  
+    #recordDetails table.exercise-table th:nth-child(3),
+    #recordDetails table.exercise-table td:nth-child(3) {
+      width: 40%;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="record">
+    <h1>View Your History</h1>
+    <p>Click a date on the calendar to see your records.</p>
+
+    <div class="history__layout">
+      <div id='calendar'></div>
+      <div id="recordDetails">
+        <h2>🗂 Record Details</h2>
+        <table>
+          <tr><th>Field</th><th>Value</th></tr>
+          <tr><td>Date</td><td id="record-date">—</td></tr>
+          <tr><td>Weight (kg)</td><td id="record-weight">—</td></tr>
+          <tr><td>Breakfast</td><td id="record-breakfast">—</td></tr>
+          <tr><td>Lunch</td><td id="record-lunch">—</td></tr>
+          <tr><td>Dinner</td><td id="record-dinner">—</td></tr>
+        </table>
+
+        <h3>🏃 Exercise Activities</h3>
+        <table id="exercise-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Duration (min)</th>
+              <th>Intensity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- To be filled dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log("📅 History page JS running");
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        dateClick: function (info) {
+        document.getElementById("record-date").textContent = info.dateStr;
+        document.getElementById("record-weight").textContent = "—";
+        document.getElementById("record-breakfast").textContent = "—";
+        document.getElementById("record-lunch").textContent = "—";
+        document.getElementById("record-dinner").textContent = "—";
+
+        const tableBody = document.getElementById("exercise-table").querySelector("tbody");
+        tableBody.innerHTML = "";
+
+        fetch(`/record_details/${info.dateStr}`)
+          .then(res => res.json())
+          .then(result => {
+            if (result.status === "success") {
+              const data = result.data;
+              document.getElementById("record-weight").textContent = data.weight + " kg";
+              document.getElementById("record-breakfast").textContent = data.breakfast;
+              document.getElementById("record-lunch").textContent = data.lunch;
+              document.getElementById("record-dinner").textContent = data.dinner;
+
+              if (data.exercises.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3">No exercises</td>`;
+                tableBody.appendChild(row);
+              } else {
+                data.exercises.forEach(ex => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+                    <td>${ex.type}</td>
+                    <td>${ex.duration}</td>
+                    <td>${ex.intensity}</td>
+                  `;
+                  tableBody.appendChild(row);
+                });
+              }
+            } else if (result.status === "empty") {
+              const row = document.createElement("tr");
+              row.innerHTML = `<td colspan="3">No record found</td>`;
+              tableBody.appendChild(row);
+            } else {
+              alert("Error: " + result.message);
+            }
+          });
+       }
+
+      });
+      calendar.render();
+    });
+  </script>
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    selectable: true,
+    dateClick: function (info) {
+      document.getElementById("recordDetails").innerHTML = `
+        <h2>🗂 Record Details</h2>
+        <p>You clicked: ${info.dateStr}</p>
+      `;
+    }
+  });
+  calendar.render();
+
+  // Load today's record
+  fetch('/get_today_record')
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        const d = data.data;
+        const exerciseRows = d.exercises.map(ex => `
+          <tr><td>${ex.type}</td><td>${ex.duration}</td><td>${ex.intensity}</td></tr>
+        `).join('');
+
+        document.getElementById("recordDetails").innerHTML = `
+          <h2>🗂 Today’s Record</h2>
+          <table><tr><th>Weight</th><td>${d.weight}</td></tr>
+                 <tr><th>Breakfast</th><td>${d.breakfast}</td></tr>
+                 <tr><th>Lunch</th><td>${d.lunch}</td></tr>
+                 <tr><th>Dinner</th><td>${d.dinner}</td></tr></table>
+          <h3>Exercise</h3>
+          <table><tr><th>Type</th><th>Duration (min)</th><th>Intensity</th></tr>
+                 ${exerciseRows}</table>
+        `;
+      }
+    });
+});
+</script>
