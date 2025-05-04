@@ -59,6 +59,38 @@ function setupEventListeners(page) {
           `;
           table.appendChild(row);
         });
+
+        const ctx = document.getElementById("weight-chart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: result.data.map(entry => entry.date),
+            datasets: [{
+              label: "Weight",
+              data: result.data.map(entry => entry.weight),
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Date"
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Weight (kg)"
+                }
+              }
+            }
+          }
+        })
       });
   }
   
