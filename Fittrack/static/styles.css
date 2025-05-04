@@ -220,6 +220,80 @@
 }
 
 
+/* Overview */
+.overview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 1rem;
+  min-height: 100vh;
+  text-align: center;
+  background-image: url("/static/images/fittrack-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  backdrop-filter: brightness(0.95);
+}
+
+.overview-content {
+  max-width: 720px;
+  padding: 2rem;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.5); 
+  backdrop-filter: blur(12px);              
+  -webkit-backdrop-filter: blur(12px);      
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.overview-title {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.overview-description {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+}
+
+.overview-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.overview-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.overview-btn:hover {
+  background-color: #388e3c;
+}
+
+.overview-btn.secondary {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.overview-btn.secondary:hover {
+  background-color: #bdbdbd;
+}
+
+
+
+
 /* Auth Section (Sign In / Sign Up / Basic Info) */
 .auth {
   background-color: #fffbea;

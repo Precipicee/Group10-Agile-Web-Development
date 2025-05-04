@@ -21,7 +21,7 @@ function setupEventListeners(page) {
       startBtn.addEventListener("click", () => loadPage("services"));
     }
   }
-
+  
   // === Services Page ===
   if (page === "services") {
     const recordBtn = document.getElementById("btn-record");
