@@ -120,8 +120,8 @@ def register_routes(app):
                 birthday=birthday_str,
                 age=age,
                 gender=gender,
-                height=int(height),
-                current_weight=weight_reg,
+                height=float(height),
+                current_weight=float(weight_reg),
                 target_weight=float(target_weight),
                 avatar=avatar,
                 weight_reg=weight_reg,
@@ -472,8 +472,8 @@ def register_routes(app):
             # input
             user.birthday = birthday_str
             user.gender = gender
-            user.height = int(height_val)
-            user.weight_reg = weight_val
+            user.height = float(height_val)
+            user.weight_reg = float(weight_val)
             user.target_weight = target_weight_val
             user.age = age
             user.bmi_reg = bmi
