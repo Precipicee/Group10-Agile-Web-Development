@@ -355,6 +355,86 @@ if (page === "upload") {
   
   
 }
+// === Friends Page ===
+if (page === "friends") {
+  console.log("👥 Friends page JS loaded");
+
+  document.getElementById("btn-send-request").addEventListener("click", async () => {
+    const username = document.getElementById("friend-username").value.trim();
+    if (!username) return alert("Please enter a username");
+
+    const res = await fetch("/add_friend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to_username: username })  
+    });
+    
+
+    const result = await res.json();
+    alert(result.message || "Friend request sent");
+    loadPage("friends");  // reload page
+  });
+
+  fetch("/get_friend_data")
+    .then(res => res.json())
+    .then(data => {
+      renderFriendRequests("received", data.received_requests, "received-requests-container");
+      renderFriendRequests("sent", data.sent_requests, "sent-requests-container");
+      renderFriendList(data.friends);
+    });
+}
+
+function renderFriendRequests(type, list, containerId) {
+  const container = document.getElementById(containerId);
+  if (!list.length) {
+    container.innerHTML = `<p>No ${type} requests.</p>`;
+    return;
+  }
+
+  container.innerHTML = "";
+  list.forEach(req => {
+    const div = document.createElement("div");
+    div.className = "friend-request-entry";
+    div.innerHTML = `
+      <span>${type === "received" ? "From" : "To"}: ${type === "received" ? req.from_user : req.to_user}</span>
+      ${type === "received" ? `
+        <button onclick="handleRequest(${req.id}, 'accept')">Accept</button>
+        <button onclick="handleRequest(${req.id}, 'reject')">Reject</button>
+      ` : `<span>Status: ${req.status}</span>`}
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderFriendList(friends) {
+  const container = document.getElementById("friends-list-container");
+  if (!friends.length) {
+    container.innerHTML = "<p>You have no friends yet.</p>";
+    return;
+  }
+
+  container.innerHTML = "";
+  friends.forEach(f => {
+    const div = document.createElement("div");
+    div.className = "friend-entry";
+    div.textContent = f.username;
+    container.appendChild(div);
+  });
+}
+
+async function handleRequest(requestId, action) {
+  const res = await fetch(`/respond_request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ request_id: requestId, action })
+  });
+
+  const result = await res.json();
+  alert(result.message || "Updated");
+  loadPage("friends");
+}
+window.handleRequest = handleRequest;
+
 
  // === History Page ===
 if (page === "history") {
@@ -508,6 +588,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const previous = historyStack[historyStack.length - 1];
         loadPage(previous);
       }
+    });
+  }
+  const friendsBtn = document.getElementById("nav-friends");
+  if (friendsBtn) {
+    friendsBtn.addEventListener("click", () => {
+      loadPage("friends");
     });
   }
 
