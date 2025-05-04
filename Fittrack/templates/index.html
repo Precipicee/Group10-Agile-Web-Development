@@ -26,10 +26,11 @@
             <a href="/" class="navbar__links">Home</a>
           </li>
           <li class="navbar__item">
-            <a href="/" class="navbar__links">...</a>
+            <a href="#" class="navbar__links" onclick="loadPage('overview')">About</a>
           </li>
+          {% if session.get('user') %}
           <li class="navbar__item">
-            <a href="/" class="navbar__links">...</a>
+            <a href="#" id="nav-friends" class="navbar__links">Friends</a>
           </li>
           <li class="navbar__item">
             <button id="back-button" class="navbar__links" style="border: none; background: none; font: inherit; cursor: pointer;">
@@ -37,10 +38,6 @@
             </button>
           </li>
 
-          {% if session.get('user') %}
-          <li class="navbar__item">
-            <a href="#" id="nav-friends" class="navbar__links">Friends</a>
-          </li>
           <li class="navbar__user">
             <span id="navbar-username" class="navbar__links" onclick="loadPage('profile')" style="cursor: pointer;">{{ session['user'] }}</span>
           </li>          
