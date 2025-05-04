@@ -37,6 +37,9 @@
           </li>
 
           {% if session.get('user') %}
+          <li class="navbar__item">
+            <a href="#" id="nav-friends" class="navbar__links">Friends</a>
+          </li>
           <li class="navbar__user">
             <span id="navbar-username" class="navbar__links" onclick="loadPage('profile')" style="cursor: pointer;">{{ session['user'] }}</span>
           </li>          
