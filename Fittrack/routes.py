@@ -3,6 +3,8 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from .models import User, DailyRecord, DailyExercise
+from .models import FriendRequest
+from sqlalchemy import or_
 
 
 DATABASE = 'users.db'
@@ -118,8 +120,8 @@ def register_routes(app):
                 birthday=birthday_str,
                 age=age,
                 gender=gender,
-                height=float(height),
-                current_weight=float(weight_reg),
+                height=int(height),
+                current_weight=weight_reg,
                 target_weight=float(target_weight),
                 avatar=avatar,
                 weight_reg=weight_reg,
@@ -470,8 +472,8 @@ def register_routes(app):
             # input
             user.birthday = birthday_str
             user.gender = gender
-            user.height = float(height_val)
-            user.weight_reg = float(weight_val)
+            user.height = int(height_val)
+            user.weight_reg = weight_val
             user.target_weight = target_weight_val
             user.age = age
             user.bmi_reg = bmi
@@ -599,9 +601,189 @@ def register_routes(app):
 
         return jsonify({'status': 'success', 'dates': date_list})
 
+    @app.route("/get_friend_data")
+    def get_friend_data():
+        username = session.get("user")
+        if not username:
+            return jsonify({"error": "Not logged in"}), 401
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # get request
+        received = FriendRequest.query.filter_by(to_user_id=user.user_id, status="pending").all()
+        received_data = [
+            {"id": r.id, "from_user": r.from_user.username if r.from_user else "(unknown)"}
+            for r in received
+        ]
+
+        # send request
+        sent = FriendRequest.query.filter_by(from_user_id=user.user_id).all()
+        sent_data = [
+            {"id": r.id, "to_user": r.to_user.username if r.to_user else "(unknown)", "status": r.status}
+            for r in sent
+        ]
+
+        # friend list
+        accepted = FriendRequest.query.filter(
+            ((FriendRequest.from_user_id == user.user_id) | (FriendRequest.to_user_id == user.user_id)) &
+            (FriendRequest.status == "accepted")
+        ).all()
+
+        friend_ids = set()
+        for r in accepted:
+            if r.from_user_id != user.user_id:
+                friend_ids.add(r.from_user_id)
+            elif r.to_user_id != user.user_id:
+                friend_ids.add(r.to_user_id)
+
+        friends = User.query.filter(User.user_id.in_(friend_ids)).all()
+        friends_data = [{"username": f.username} for f in friends]
+
+        return jsonify({
+            "received_requests": received_data,
+            "sent_requests": sent_data,
+            "friends": friends_data
+        })
 
 
+    @app.route("/respond_request", methods=["POST"])
+    def respond_request():
+        username = session.get("user")
+        if not username:
+            return jsonify({"status": "error", "message": "Not logged in"}), 401
 
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return jsonify({"status": "error", "message": "User not found"}), 404
+
+        data = request.get_json()
+        request_id = data.get("request_id")
+        action = data.get("action")  # 'accept' or 'reject'
+
+        friend_request = FriendRequest.query.filter_by(id=request_id, to_user_id=user.user_id).first()
+        if not friend_request:
+            return jsonify({"status": "error", "message": "Request not found"}), 404
+
+        if action == "accept":
+            friend_request.status = "accepted"
+        elif action == "reject":
+            friend_request.status = "rejected"
+        else:
+            return jsonify({"status": "error", "message": "Invalid action"}), 400
+
+        db.session.commit()
+        return jsonify({"status": "success", "message": f"Request {action}ed"})
+
+
+    @app.route("/friends")
+    def friends():
+        username = session.get("user")
+        if not username:
+            return redirect(url_for("signin"))
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return redirect(url_for("signin"))
+
+        user_id = user.user_id
+
+        # Sent and received requests
+        sent_requests = FriendRequest.query.filter_by(from_user_id=user_id).all()
+        received_requests = FriendRequest.query.filter_by(to_user_id=user_id).all()
+
+        # Accepted friends
+        accepted_requests = FriendRequest.query.filter(
+            ((FriendRequest.from_user_id == user_id) | (FriendRequest.to_user_id == user_id)) &
+            (FriendRequest.status == "accepted")
+        ).all()
+
+        # Resolve friend names
+        def get_user(user_id):
+            return User.query.filter_by(user_id=user_id).first()
+
+        friends = []
+        for req in accepted_requests:
+            friend_id = req.to_user_id if req.from_user_id == user_id else req.from_user_id
+            friend = get_user(friend_id)
+            if friend:
+                friends.append(friend)
+
+        return render_template("friends.html",
+                            sent_requests=sent_requests,
+                            received_requests=received_requests,
+                            friends=friends)
+    
+
+
+    @app.route("/add_friend", methods=["POST"])
+    def add_friend():
+        username = session.get("user")
+        if not username:
+            return jsonify({"status": "error", "message": "Not logged in"}), 401
+
+        from_user = User.query.filter_by(username=username).first()
+        data = request.get_json()
+        print("[DEBUG] received data:", data)
+        to_username = data.get("to_username")
+        if not to_username:
+            return jsonify({"status": "error", "message": "No username provided"})
+
+        to_user = User.query.filter_by(username=to_username).first()
+        if not to_user:
+            return jsonify({"status": "error", "message": "User not found"})
+
+        if to_user.user_id == from_user.user_id:
+            return jsonify({"status": "error", "message": "You cannot add yourself"})
+
+        existing = FriendRequest.query.filter_by(
+            from_user_id=from_user.user_id,
+            to_user_id=to_user.user_id
+        ).first()
+
+        if existing:
+            return jsonify({"status": "error", "message": "Friend request already sent"})
+
+        new_request = FriendRequest(
+            from_user_id=from_user.user_id,
+            to_user_id=to_user.user_id,
+            status="pending"
+        )
+        db.session.add(new_request)
+        db.session.commit()
+
+        return jsonify({"status": "success", "message": "Friend request sent!"})
+
+
+    
+
+    @app.route("/respond_friend_request", methods=["POST"])
+    def respond_friend_request():
+        username = session.get("user")
+        if not username:
+            return redirect(url_for("signin"))
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return redirect(url_for("signin"))
+
+        request_id = request.form.get("request_id")
+        action = request.form.get("action")  # 'accept' or 'reject'
+
+        friend_request = FriendRequest.query.filter_by(id=request_id, to_user_id=user.user_id).first()
+        if not friend_request:
+            return "Request not found", 404
+
+        if action == "accept":
+            friend_request.status = "accepted"
+        elif action == "reject":
+            friend_request.status = "rejected"
+        else:
+            return "Invalid action", 400
+
+        db.session.commit()
+        return redirect(url_for("friends"))
 
 
 
