@@ -31,17 +31,17 @@ function setupEventListeners(page) {
   }
 
   // === Report Page ===
-  if (page === "visualise") {
-    const weightBtn = document.getElementById("btn-weight");
-    if (weightBtn) {
-      weightBtn.addEventListener("click", () => loadPage("weight"));
-    }
-    
-    const exerciseBtn = document.getElementById("btn-exercise-report");
-    if (exerciseBtn) {
-      exerciseBtn.addEventListener("click", () => loadPage("exercise"));
-    }  
+if (page === "visualise") {
+  const exerciseBtn = document.getElementById("btn-exercise-report");
+  if (exerciseBtn) {
+    exerciseBtn.addEventListener("click", () => loadPage("exercise"));
   }
+
+  const weightBtn = document.getElementById("btn-weight");
+  if (weightBtn) {
+    weightBtn.addEventListener("click", () => loadPage("weight"));
+  }
+}
   
   // === Weight Report Page ===
   if (page === "weight") {
