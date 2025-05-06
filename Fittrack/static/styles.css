@@ -1254,3 +1254,69 @@
     width: 100%;
   }
 }
+
+.reports .exercise-chart-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+/* Exercise Report Styling */
+.reports .exercise-chart-column {
+  flex: 1 1 400px;
+  max-width: 500px;
+}
+
+.exercise-summary-table {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.exercise-summary-table table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 80%;
+  max-width: 600px;
+}
+
+.exercise-summary-table th, .exercise-summary-table td {
+  border: 1px solid #aaa;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.exercise-goal-table {
+  width: 80%;
+  max-width: 600px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  font-size: 1rem;
+  text-align: center;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.exercise-goal-table th,
+.exercise-goal-table td {
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+}
+
+.exercise-goal-table th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+
+.goal-message {
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.goal-message.visible {
+  opacity: 1;
+}
