@@ -1,0 +1,45 @@
+<div class="reports">
+  <h1>Exercise Analysis</h1>
+
+<h2 class="exercise-section-heading">Your Exercise Goals</h2>
+
+<p id="goalMessage" class="goal-message"></p>
+
+<table class="exercise-goal-table">
+  <thead>
+    <tr>
+      <th>Exercise Goal (min/week)</th>
+      <th>Minutes Completed</th>
+      <th>Minutes Remaining</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="goal-minutes"></td>
+      <td id="completed-minutes"></td>
+      <td id="remaining-minutes"></td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2 style="margin-top: 50px;">Exercise Over Time</h2>
+  <p>This chart shows your minutes of exercise recorded over recent days.</p>
+  <canvas id="exerciseChart" style="max-width: 700px; margin-top: 20px;"></canvas>
+
+<h2 style="margin-top: 50px;">Exercise Breakdown</h2>
+<p>This section shows how your exercise is split by type and intensity.</p>
+
+  <div class="exercise-chart-row">
+    <div class="exercise-chart-column">
+      <h3>Breakdown by Type</h3>
+      <p>This chart shows how your total exercise time is distributed between different exercise types.</p>
+      <canvas id="typeBreakdownChart" width="400" height="400"></canvas>
+    </div>
+
+    <div class="exercise-chart-column">
+      <h3>Breakdown by Intensity</h3>
+      <p>This chart shows how your total exercise time is distributed across different intensity levels.</p>
+      <canvas id="intensityBreakdownChart" width="400" height="400"></canvas>
+    </div>
+  </div>
+</div>

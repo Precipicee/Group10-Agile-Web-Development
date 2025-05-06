@@ -36,8 +36,13 @@ function setupEventListeners(page) {
     if (weightBtn) {
       weightBtn.addEventListener("click", () => loadPage("weight"));
     }
-
+    
+    const exerciseBtn = document.getElementById("btn-exercise-report");
+    if (exerciseBtn) {
+      exerciseBtn.addEventListener("click", () => loadPage("exercise"));
+    }  
   }
+  
   // === Weight Report Page ===
   if (page === "weight") {
     fetch("/weight_data")
@@ -93,8 +98,174 @@ function setupEventListeners(page) {
         })
       });
   }
-  
 
+// === Exercise Report Page ===
+if (page === "exercise") {
+
+// Weekly Exercise Goal Table
+fetch('/api/exercise_goal_progress')
+  .then(res => res.json())
+  .then(data => {
+    if (data.status !== "success") {
+      console.error("Failed to load goal progress");
+      return;
+    }
+
+    // Add motivational message above the table
+    const messageEl = document.getElementById("goalMessage");
+    if (data.remaining <= 0) {
+      messageEl.textContent = "🎉 Congratulations! You've met your goal for the week! 🎉";
+      messageEl.style.color = "green";
+    } else {
+      messageEl.textContent = `Keep going! You're ${data.remaining} minutes away from your goal. 💪`;
+      messageEl.style.color = "orangered";
+    }
+setTimeout(() => {
+  messageEl.classList.add("visible");
+}, 50);
+
+    // Fill in table values
+    document.getElementById("goal-minutes").textContent = data.goal;
+    document.getElementById("completed-minutes").textContent = data.completed;
+    document.getElementById("remaining-minutes").textContent = data.remaining;
+  });
+
+
+  // Line Chart: Exercise Over Time
+  fetch("/api/exercise_data")
+    .then(res => res.json())
+    .then(result => {
+      if (!result.labels || !result.minutes) {
+        alert("Failed to load exercise data");
+        return;
+      }
+
+      const ctxLine = document.getElementById("exerciseChart").getContext("2d");
+
+      new Chart(ctxLine, {
+        type: "line",
+        data: {
+          labels: result.labels,
+          datasets: [{
+            label: "Minutes of Exercise",
+            data: result.minutes,
+            borderColor: "rgba(0, 200, 200, 1)",
+            backgroundColor: "rgba(0, 200, 200, 0.2)",
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Date"
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Minutes"
+              },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+
+  // Pie Chart: Exercise Type Breakdown
+  fetch("/api/exercise_type_breakdown")
+    .then(res => res.json())
+    .then(data => {
+      if (!data.labels || !data.minutes) {
+        alert("Failed to load exercise breakdown");
+        return;
+      }
+
+      const ctxPie = document.getElementById("typeBreakdownChart").getContext("2d");
+
+      new Chart(ctxPie, {
+        type: "pie",
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: "Total Minutes by Type",
+            data: data.minutes,
+            backgroundColor: [
+              "#FF6384", "#36A2EB", "#FFCE56",
+              "#4BC0C0", "#9966FF", "#FF9F40"
+            ],
+            borderColor: "#fff",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom"
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  return `${label}: ${value} min`;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+
+  // Pie Chart: Exercise Intensity Breakdown
+  fetch("/api/exercise_intensity_breakdown")
+    .then(res => res.json())
+    .then(data => {
+      if (!data.labels || !data.minutes) {
+        alert("Failed to load intensity breakdown");
+        return;
+      }
+
+      const ctxIntensity = document.getElementById("intensityBreakdownChart").getContext("2d");
+
+      new Chart(ctxIntensity, {
+        type: "pie",
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: "Total Minutes by Intensity",
+            data: data.minutes,
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+            borderColor: "#fff",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom"
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  return `${label}: ${value} min`;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+}
+  
   // === Sign In Page ===
   if (page === "signin") {
     const signinForm = document.getElementById("signinForm");
