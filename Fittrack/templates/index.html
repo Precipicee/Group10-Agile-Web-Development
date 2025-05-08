@@ -30,6 +30,12 @@
           </li>
           {% if session.get('user') %}
           <li class="navbar__item">
+            <a href="#" class="navbar__links" onclick="loadPage('upload')">Entry</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__links" onclick="loadPage('visualise')">Reports</a>
+          </li>
+          <li class="navbar__item">
             <a href="#" id="nav-friends" class="navbar__links">Friends</a>
           </li>
           <li class="navbar__item">
