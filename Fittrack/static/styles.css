@@ -1357,10 +1357,17 @@
   color: #333;
 }
 
-.weight-history canvas {
+.chart-container {
+  width: 100%;
   max-width: 700px;
-  height: 150px;
+  height: 300px; 
+  position: relative; 
   margin-top: 20px;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .weight-history table {
