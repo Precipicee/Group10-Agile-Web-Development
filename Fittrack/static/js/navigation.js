@@ -65,6 +65,11 @@ if (page === "visualise") {
           table.appendChild(row);
         });
 
+        // Calculate minimum weight
+        const weights = result.data.map(entry => entry.weight);
+        const minWeight = Math.min(...weights);
+        const maxWeight = Math.max(...weights);
+
         const ctx = document.getElementById("weight-chart").getContext("2d");
         new Chart(ctx, {
           type: "line",
@@ -80,6 +85,7 @@ if (page === "visualise") {
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
               x: {
                 title: {
@@ -91,6 +97,12 @@ if (page === "visualise") {
                 title: {
                   display: true,
                   text: "Weight (kg)"
+                },
+                beginAtZero: false,
+                min: Math.floor(minWeight/5) * 5 - 5,
+                max: Math.floor(maxWeight/5) * 5 + 5,
+                ticks: {
+                  stepSize: 5
                 }
               }
             }
