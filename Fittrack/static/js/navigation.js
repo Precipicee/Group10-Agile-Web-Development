@@ -67,8 +67,42 @@ if (page === "visualise") {
 
         // Calculate minimum weight
         const weights = result.data.map(entry => entry.weight);
+        const dates = result.data.map(entry => new Date(entry.date));
         const minWeight = Math.min(...weights);
         const maxWeight = Math.max(...weights);
+
+        const startingWeight = weights[0];         
+        const currentWeight = weights[weights.length - 1];
+        const targetWeight = 70; // Example target weight, replace with dynamic value if needed
+        const oneMonthAgoDate = new Date();
+        oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
+
+        let weightOneMonthAgo = "N/A";
+        for (let i = weights.length - 1; i >= 0; i--) {
+          if (dates[i] <= oneMonthAgoDate) {
+            weightOneMonthAgo = weights[i];
+            break;
+          }
+        }
+        document.getElementById("current-weight-big").textContent = currentWeight ? `${currentWeight} kg` : "N/A";
+        document.getElementById("current-weight").textContent = currentWeight || "N/A";
+        document.getElementById("target-weight").textContent = targetWeight || "N/A";
+        document.getElementById("weight-one-month-ago").textContent = weightOneMonthAgo;
+
+        const goalMessage = document.getElementById("goal-message");
+
+        if (currentWeight && targetWeight) {
+          const diff = Math.abs(currentWeight - targetWeight).toFixed(1);
+          const aimingLower = startingWeight > targetWeight ? true : false;
+
+          
+          // TODO: change this up.
+          if ((aimingLower && currentWeight <= targetWeight) || (!aimingLower && currentWeight >= targetWeight)) {
+            goalMessage.innerHTML = `🎉 Good job! You’ve reached your goal weight!`;
+          } else {
+            goalMessage.innerHTML = `Keep going! You are <span class="gradient-text fw-bold">${diff} kg</span> away from your target weight.`;
+          }
+        }
 
         const ctx = document.getElementById("weight-chart").getContext("2d");
         new Chart(ctx, {
