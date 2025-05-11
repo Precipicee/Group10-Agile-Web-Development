@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Date
 
 db = SQLAlchemy()
 
@@ -11,7 +12,7 @@ class User(db.Model):
     hashed_password = db.Column(db.String(200), nullable=False)
 
     # Optional fields for profile
-    birthday = db.Column(db.String(20))
+    birthday = db.Column(Date)
     age = db.Column(db.Integer)
     gender = db.Column(db.String(10))
     height = db.Column(db.Integer)
@@ -29,7 +30,7 @@ class User(db.Model):
     bmi_reg = db.Column(db.Float)
     bmi_now = db.Column(db.Float)
 
-    register_date = db.Column(db.String(20))
+    register_date = db.Column(Date)
 
     # One-to-many relationship
     records = db.relationship('DailyRecord', backref='user', lazy=True)
