@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Weight Report - FitTrack{% endblock %}
+
+{% block content %}
+<div class="weight-history">
+  <h1>Weight History</h1>
+  <h2>Weight Over Time</h2>
+
+  <div class="chart-container" style="width: 100%; max-width: 800px; margin: auto;">
+    <canvas id="weight-chart"></canvas>
+  </div>
+
+  <table style="margin-top: 40px; width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid #ccc; padding: 8px;">Date</th>
+        <th style="border: 1px solid #ccc; padding: 8px;">Weight (kg)</th>
+      </tr>
+    </thead>
+    <tbody id="weight-table-body">
+      <!-- Filled by JS -->
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch("/weight_data")
+      .then(res => res.json())
+      .then(result => {
+        if (result.status !== "success") {
+          alert("Failed to load weight data");
+          return;
+        }
+
+        const table = document.getElementById("weight-table-body");
+        table.innerHTML = "";
+
+        result.data.forEach(entry => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td style="border: 1px solid #ccc; padding: 8px;">${entry.date}</td>
+            <td style="border: 1px solid #ccc; padding: 8px;">${entry.weight}</td>
+          `;
+          table.appendChild(row);
+        });
+
+        const ctx = document.getElementById("weight-chart").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: result.data.map(entry => entry.date),
+            datasets: [{
+              label: "Weight",
+              data: result.data.map(entry => entry.weight),
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              fill: true,
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Date"
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Weight (kg)"
+                }
+              }
+            }
+          }
+        });
+      });
+  });
+</script>
+{% endblock %}

@@ -1,38 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Upload - FitTrack{% endblock %}
+
+{% block content %}
 <div class="record">
   <h1>Record Your Data</h1>
   <p>Keep track of your health data to generate meaningful insights.</p>
 
-  <form class="record__form" id="recordForm" method="POST" action="/add_record" onsubmit="return prepareExerciseData()">
-    <!-- Date -->
+  <form class="record__form" id="recordForm" method="POST" action="{{ url_for('upload_bp.add_record') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
     <div class="record__group">
       <label for="date">Date</label>
-      <input type="date" id="date" name="date" required />
+      <input type="date" id="date" name="date" required value="{{ form_data.get('date', '') }}">
     </div>
 
-    <!-- Weight -->
     <div class="record__group">
       <label for="weight">Today's Weight (kg)</label>
-      <input type="number" id="weight" name="weight" step="0.01" placeholder="e.g. 68.50" required />
+      <input type="number" id="weight" name="weight" step="0.01" required value="{{ form_data.get('weight', '') }}">
     </div>
 
-    <!-- Diet -->
     <div class="record__group">
       <label class="tooltip-container">
         Meals
         <i class="fa-solid fa-circle-info tooltip-icon"></i>
         <span class="custom-tooltip">
-          If you skipped a meal,<br>
-          type "NO". <br><br>
-          Leaving it blank will <br>
-          auto-fill a default value.
+          If you skipped a meal,<br> type "NO". <br><br>
+          Leaving it blank will auto-fill a default value.
         </span>
       </label>
-      <input type="text" name="breakfast" placeholder="Breakfast: e.g. oats and egg" />
-      <input type="text" name="lunch" placeholder="Lunch: e.g. rice and fish" />
-      <input type="text" name="dinner" placeholder="Dinner: e.g. noodles and soup" />
+      <input type="text" name="breakfast" placeholder="Breakfast" value="{{ form_data.get('breakfast', '') }}" />
+      <input type="text" name="lunch" placeholder="Lunch" value="{{ form_data.get('lunch', '') }}" />
+      <input type="text" name="dinner" placeholder="Dinner" value="{{ form_data.get('dinner', '') }}" />
     </div>
 
-    <!-- Exercise -->
     <div class="record__group">
       <label class="tooltip-container">
         Exercise Activities
@@ -42,7 +42,6 @@
           • Moderate: steady effort, some breaks<br>
           • Intense: high pace, sustained effort, minimal rest
         </span>
-        
       </label>
 
       <div id="exerciseContainer">
@@ -56,20 +55,19 @@
             <option value="intense">Intense</option>
           </select>
           <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
-        </div>        
+        </div>
       </div>
       <button type="button" class="add-exercise-btn" onclick="addExerciseRow()">+ Add</button>
-
-      <!-- Hidden field to store combined exercise string -->
-      <input type="hidden" id="exerciseCombined" name="exercise" />
     </div>
 
     <div class="record__button-row">
       <button type="submit" class="record__btn">Submit Record</button>
       <button type="button" id="view-history" class="record__btn">View History</button>
     </div>
-      
-
   </form>
 </div>
+{% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

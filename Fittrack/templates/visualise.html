@@ -1,6 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Reports - FitTrack{% endblock %}
+
+{% block content %}
 <div class="reports">
-  <h1>My Report</h1>
+  <h1>📊 My Report</h1>
   <div class="reports__container">
+
     <!-- Weight Report -->
     <div class="reports__card">
       <img src="/static/images/weight.png" alt="weight icon" class="services__img" />
@@ -24,5 +29,25 @@
       <p>Analyze and improve your health</p>
       <button id="btn-report-analysis">Check</button>
     </div>
+
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("btn-weight")?.addEventListener("click", () => {
+      window.location.href = "/report/weight";
+    });
+
+    document.getElementById("btn-exercise-report")?.addEventListener("click", () => {
+      window.location.href = "/report/exercise";
+    });
+
+    document.getElementById("btn-report-analysis")?.addEventListener("click", () => {
+      window.location.href = "/report/analysis";
+    });
+  });
+</script>
+{% endblock %}
