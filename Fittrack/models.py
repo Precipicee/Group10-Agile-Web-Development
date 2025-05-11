@@ -1,17 +1,21 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Date
+from flask_login import UserMixin
+
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
 
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     hashed_password = db.Column(db.String(200), nullable=False)
+    is_profile_complete = db.Column(db.Boolean, default=False)
 
     # Optional fields for profile
-    birthday = db.Column(db.String(20))
+    birthday = db.Column(Date)
     age = db.Column(db.Integer)
     gender = db.Column(db.String(10))
     height = db.Column(db.Integer)
@@ -29,11 +33,13 @@ class User(db.Model):
     bmi_reg = db.Column(db.Float)
     bmi_now = db.Column(db.Float)
 
-    register_date = db.Column(db.String(20))
+    register_date = db.Column(Date)
 
     # One-to-many relationship
     records = db.relationship('DailyRecord', backref='user', lazy=True)
 
+    def get_id(self):
+        return str(self.user_id) if self.user_id else None
 
 
 class DailyRecord(db.Model):
