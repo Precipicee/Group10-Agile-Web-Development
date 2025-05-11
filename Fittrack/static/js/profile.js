@@ -40,7 +40,7 @@ function initProfilePage() {
     editBtn.textContent = editing ? "💾" : "✏️";
 
     if (editing) {
-      // 进入编辑模式
+      // edit
       editableFields.forEach(field => {
         const container = document.getElementById(field.id);
         const value = window.profileOriginalData[field.key];
@@ -76,7 +76,7 @@ function initProfilePage() {
       });
 
     } else {
-      // Save mode
+      // Save
       const payload = {};
 
       editableFields.forEach(field => {
