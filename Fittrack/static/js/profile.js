@@ -76,7 +76,7 @@ function initProfilePage() {
       });
 
     } else {
-      // 保存模式
+      // Save mode
       const payload = {};
 
       editableFields.forEach(field => {
