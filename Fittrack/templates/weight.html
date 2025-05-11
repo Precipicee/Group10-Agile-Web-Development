@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Weight Report - FitTrack{% endblock %}
+
+{% block content %}
+<div class="weight-history">
+  <h1>Weight History</h1>
+
+  <div class="content-box">
+
+    <!-- Current Weight Card -->
+    <div class="card text-center border-alert-subtle bg-light-subtle mb-3 shadow-sm">
+      <div class="card-body">
+        <h2 class="cur-weight-card fw-bold text-dark">
+          Current Weight: <span class="gradient-text" id="current-weight-big"></span>
+        </h2>
+      </div>
+    </div>
+
+    <!-- Goal Message -->
+    <div class="alert alert-warning text-center fs-5 fw-medium" role="alert" id="goal-message">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Weight Summary -->
+    <div class="weight-summary">
+      <h2>Weight Summary</h2>
+      <table class="weight-summary-table">
+        <thead>
+          <tr>
+            <th>Current Weight (kg)</th>
+            <th>Target Weight (kg)</th>
+            <th>Weight 1 Month Ago (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="current-weight"></td>
+            <td id="target-weight"></td>
+            <td id="weight-one-month-ago"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Weight Chart -->
+    <div class="chart-header">
+      <h2>Weight Over Time</h2>
+    </div>
+    <div class="chart-container" style="width: 100%; max-width: 800px; margin: auto;">
+      <canvas id="weight-chart"></canvas>
+    </div>
+
+    <!-- Weight Log Table -->
+    <div class="table-container" style="margin-top: 40px;">
+      <h2>Weight Log</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid #ccc; padding: 8px;">Date</th>
+            <th style="border: 1px solid #ccc; padding: 8px;">Weight (kg)</th>
+          </tr>
+        </thead>
+        <tbody id="weight-table-body">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/weight_data")
+    .then(res => res.json())
+    .then(result => {
+      if (result.status !== "success") {
+        alert("Failed to load weight data");
+        return;
+      }
+
+      const table = document.getElementById("weight-table-body");
+      table.innerHTML = "";
+
+      result.data.forEach(entry => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td style="border: 1px solid #ccc; padding: 8px;">${entry.date}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${entry.weight}</td>
+        `;
+        table.appendChild(row);
+      });
+
+      const weights = result.data.map(entry => entry.weight);
+      const dates = result.data.map(entry => new Date(entry.date));
+      const minWeight = Math.min(...weights);
+      const maxWeight = Math.max(...weights);
+      const startingWeight = weights[0];
+      const currentWeight = weights[weights.length - 1];
+      const targetWeight = 70; // Replace this with dynamic value from backend if needed
+      const oneMonthAgoDate = new Date();
+      oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
+
+      let weightOneMonthAgo = "N/A";
+      for (let i = weights.length - 1; i >= 0; i--) {
+        if (dates[i] <= oneMonthAgoDate) {
+          weightOneMonthAgo = weights[i];
+          break;
+        }
+      }
+
+      document.getElementById("current-weight-big").textContent = currentWeight ? `${currentWeight} kg` : "N/A";
+      document.getElementById("current-weight").textContent = currentWeight || "N/A";
+      document.getElementById("target-weight").textContent = targetWeight || "N/A";
+      document.getElementById("weight-one-month-ago").textContent = weightOneMonthAgo;
+
+      const goalMessage = document.getElementById("goal-message");
+      if (currentWeight && targetWeight) {
+        const diff = Math.abs(currentWeight - targetWeight).toFixed(1);
+        const aimingLower = startingWeight > targetWeight;
+        if ((aimingLower && currentWeight <= targetWeight) || (!aimingLower && currentWeight >= targetWeight)) {
+          goalMessage.innerHTML = `🎉 Good job! You’ve reached your goal weight!`;
+        } else {
+          goalMessage.innerHTML = `Keep going! You are <span class="gradient-text fw-bold">${diff} kg</span> away from your target weight.`;
+        }
+      }
+
+      const ctx = document.getElementById("weight-chart").getContext("2d");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: result.data.map(entry => entry.date),
+          datasets: [{
+            label: "Weight",
+            data: result.data.map(entry => entry.weight),
+            borderColor: "rgba(75, 192, 192, 1)",
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            fill: true,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Date"
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: "Weight (kg)"
+              },
+              beginAtZero: false,
+              min: Math.floor(minWeight / 5) * 5 - 5,
+              max: Math.floor(maxWeight / 5) * 5 + 5,
+              ticks: {
+                stepSize: 5
+              }
+            }
+          }
+        }
+      });
+    });
+});
+</script>
+{% endblock %}
