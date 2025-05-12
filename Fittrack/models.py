@@ -59,6 +59,8 @@ class DailyRecord(db.Model):
     dinner = db.Column(db.String(200))
     dinner_calories = db.Column(db.Integer)
 
+    # New field: total calories - Migration
+    total_calories = db.Column(db.Integer)
     # One-to-many relationship: one record → many exercises
     exercises = db.relationship('DailyExercise', backref='record', lazy=True)
 
