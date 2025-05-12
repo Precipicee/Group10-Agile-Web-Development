@@ -1,4 +1,4 @@
-// 添加新的运动行
+
 function addExerciseRow() {
   const container = document.getElementById("exerciseContainer");
   const row = document.createElement("div");
@@ -19,7 +19,7 @@ function addExerciseRow() {
   container.appendChild(row);
 }
 
-// 删除运动行
+
 function removeThisRow(button) {
   const row = button.parentNode;
   const container = document.getElementById("exerciseContainer");
@@ -30,7 +30,7 @@ function removeThisRow(button) {
   }
 }
 
-// 日期约束和绑定逻辑
+
 document.addEventListener("DOMContentLoaded", () => {
   const dateInput = document.getElementById("date");
   const today = new Date();
@@ -62,6 +62,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ✅ 绑定函数到 window，确保 onclick 能找到
 window.addExerciseRow = addExerciseRow;
 window.removeThisRow = removeThisRow;
