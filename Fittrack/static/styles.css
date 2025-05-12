@@ -1352,8 +1352,6 @@
   font-size: 2.5rem;
 }
 
-
-
 .chart-container {
   width: 100%;
   max-width: 700px;
@@ -1456,6 +1454,11 @@
   text-align: center;
   font-size: 1.8rem;
   color: #333;
+}
+
+.card-body h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 .table-container table {

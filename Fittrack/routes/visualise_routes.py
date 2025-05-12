@@ -23,6 +23,8 @@ def weight_data():
     records = DailyRecord.query.filter_by(user_id=user.user_id).order_by(DailyRecord.date.asc()).all()
     return jsonify({
         'status': 'success',
+        'height': user.height,
+        'target_weight': user.target_weight,
         'data': [
             {'date': r.date.strftime("%Y-%m-%d"), 'weight': r.weight} for r in records
         ]
