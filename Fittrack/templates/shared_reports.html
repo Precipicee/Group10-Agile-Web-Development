@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Shared Reports - FitTrack{% endblock %}
+
+{% block content %}
+<div class="profile">
+  <h2 class="profile-title">📬 Reports Shared With You</h2>
+
+  {% if records %}
+    <div class="profile-item">
+      <ul style="list-style-type: none; padding: 0;">
+        {% for entry in records %}
+          <li style="margin-bottom: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;">
+            <strong>From:</strong> {{ entry.sender.username }}<br>
+            <strong>Date:</strong> {{ entry.record.date }}<br>
+            <strong>Weight:</strong> {{ entry.record.weight }} kg<br>
+            <strong>Calories Intake:</strong> {{ entry.record.total_calories }} kcal<br>
+            <strong>Calories Burned:</strong> {{ entry.record.calories_burned }} kcal<br>
+            <strong>Breakfast:</strong> {{ entry.record.breakfast or "N/A" }}<br>
+            <strong>Lunch:</strong> {{ entry.record.lunch or "N/A" }}<br>
+            <strong>Dinner:</strong> {{ entry.record.dinner or "N/A" }}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <p>No one has shared any records with you yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
