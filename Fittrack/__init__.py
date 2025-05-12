@@ -3,6 +3,7 @@ from flask_wtf import CSRFProtect
 from .models import db, User
 from .config import Config
 from flask_login import LoginManager, current_user
+from flask_migrate import Migrate
 
 csrf = CSRFProtect()
 login_manager = LoginManager()
@@ -15,6 +16,8 @@ def create_app():
     csrf.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth_bp.signin'
+
+    Migrate(app, db) # Migration
 
     from .routes import register_blueprints
     register_blueprints(app)
