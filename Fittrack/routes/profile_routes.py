@@ -20,7 +20,6 @@ def basicinfo():
         return render_template('basicinfo.html', form=form)
 
     try:
-        # 提取表单数据
         birthday = form.birthday.data
         gender = form.gender.data
         height = form.height.data
@@ -33,7 +32,7 @@ def basicinfo():
         height_m = height / 100
         bmi = round(weight_reg / (height_m ** 2), 2)
 
-        # 更新 current_user
+        #  current_user
         user = current_user
         user.is_profile_complete = True 
         user.birthday = birthday
@@ -53,7 +52,7 @@ def basicinfo():
 
         db.session.commit()
 
-        # 同步创建初始 DailyRecord
+        # DailyRecord
         record = DailyRecord(user_id=user.user_id, date=today, weight=weight_reg)
         db.session.add(record)
         db.session.commit()
