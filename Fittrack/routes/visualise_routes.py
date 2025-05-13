@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify. request
+from flask import Blueprint, render_template, jsonify, request
 from datetime import date, timedelta
 from Fittrack.models import User, DailyRecord, DailyExercise
 from flask_login import current_user, login_required
