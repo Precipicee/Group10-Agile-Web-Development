@@ -68,6 +68,24 @@
   #recordDetails table.exercise-table td:nth-child(3) {
     width: 40%;
   }
+
+  @media screen and (max-width: 768px) {
+    .history__layout {
+      flex-direction: column;
+    }
+
+    #calendar,
+    #recordDetails {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    #calendar {
+      min-width: 300px;
+      margin-bottom: 20px;
+    }
+  }
+
 </style>
 
 <div class="record">
