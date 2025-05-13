@@ -1,4 +1,3 @@
-
 function addExerciseRow() {
   const container = document.getElementById("exerciseContainer");
   const row = document.createElement("div");
@@ -19,7 +18,6 @@ function addExerciseRow() {
   container.appendChild(row);
 }
 
-
 function removeThisRow(button) {
   const row = button.parentNode;
   const container = document.getElementById("exerciseContainer");
@@ -29,7 +27,6 @@ function removeThisRow(button) {
     alert("At least one activity must remain.");
   }
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const dateInput = document.getElementById("date");
@@ -60,6 +57,28 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "/history";
     });
   }
+
+  const form = document.getElementById("recordForm");
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault(); // Prevent default submit
+
+    const date = document.getElementById("date").value;
+
+    try {
+      const response = await fetch(`/check_existing_record?date=${encodeURIComponent(date)}`);
+      const result = await response.json();
+
+      if (result.exists) {
+        const confirmed = confirm("A record for this date already exists. Do you want to overwrite it?");
+        if (!confirmed) return;
+      }
+
+      this.submit(); // If confirmed or no existing data, proceed
+    } catch (err) {
+      alert("Error checking existing record. Please try again.");
+      console.error(err);
+    }
+  });
 });
 
 window.addExerciseRow = addExerciseRow;
