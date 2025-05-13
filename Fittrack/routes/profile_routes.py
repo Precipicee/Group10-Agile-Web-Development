@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from datetime import datetime, date
 from Fittrack.models import db, User, DailyRecord
-from Fittrack.forms import BasicInfoForm
+from Fittrack.forms import BasicInfoForm, ChangePasswordForm
 from Fittrack import csrf
 from flask_login import current_user, login_required
+from werkzeug.security import check_password_hash, generate_password_hash
 
 profile_bp = Blueprint('profile_bp', __name__)
 
@@ -156,3 +157,26 @@ def update_profile_fields():
     except Exception as e:
         db.session.rollback()
         return jsonify({'status': 'error', 'message': str(e)})
+
+
+@profile_bp.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    user = current_user
+
+    if form.validate_on_submit():
+        current = form.current_password.data
+        new = form.new_password.data
+
+        if not check_password_hash(user.hashed_password, current):
+            flash("Incorrect current password.", "danger")
+            return render_template('change_password.html', form=form)
+
+        user.hashed_password = generate_password_hash(new)
+        db.session.commit()
+        flash("Password changed successfully!", "success")
+        return redirect(url_for('profile_bp.profile'))
+
+    return render_template('change_password.html', form=form)
+

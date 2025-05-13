@@ -24,6 +24,12 @@
     </div>
     {% endfor %}
   </div>
+
+  <div style="margin-top: 40px; text-align: center;">
+    <a href="{{ url_for('profile_bp.change_password') }}" class="btn btn-danger">
+      Change Password
+    </a>
+  </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
