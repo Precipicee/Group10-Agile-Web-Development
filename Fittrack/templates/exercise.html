@@ -2,161 +2,105 @@
 {% block title %}Exercise Report - FitTrack{% endblock %}
 
 {% block content %}
-<div class="reports">
-  <h1>Exercise Report</h1>
+<div class="weight-history">
+  <h1>Exercise History</h1>
 
-  <h2 class="exercise-section-heading">Your Weekly Exercise Goals</h2>
-  <p id="goalMessage" class="goal-message" style="font-weight: bold;"></p>
+  <div class="content-box">
 
-  <table class="exercise-goal-table" style="width: 100%; max-width: 600px; margin: 20px auto; border-collapse: collapse; border: 1px solid #ddd;">
-    <thead>
-      <tr style="background-color: #f0f0f0;">
-        <th style="padding: 8px;">Goal (min/week)</th>
-        <th>Completed</th>
-        <th>Remaining</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td id="goal-minutes" style="text-align: center;"></td>
-        <td id="completed-minutes" style="text-align: center;"></td>
-        <td id="remaining-minutes" style="text-align: center;"></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2 style="margin-top: 50px;">Exercise Over Time</h2>
-  <p>This chart shows your minutes of exercise recorded over time.</p>
-  <canvas id="exerciseChart" style="max-width: 700px; margin-top: 20px;"></canvas>
-
-  <h2 style="margin-top: 50px;">Exercise Breakdown</h2>
-  <div class="exercise-chart-row" style="display: flex; gap: 40px; margin-top: 20px;">
-    <div class="exercise-chart-column" style="flex: 1;">
-      <h3>By Type</h3>
-      <canvas id="typeBreakdownChart" width="400" height="400"></canvas>
+    <!-- Exercise Minutes Card -->
+    <div class="card text-center border-primary bg-light-subtle mb-3 shadow-sm">
+      <div class="card-body">
+        <h2 class="fw-bold text-dark">
+          Exercise Minutes This Week:
+          <span class="gradient-text" id="exercise-minutes-this-week">—</span>
+        </h2>
+      </div>
     </div>
-    <div class="exercise-chart-column" style="flex: 1;">
-      <h3>By Intensity</h3>
-      <canvas id="intensityBreakdownChart" width="400" height="400"></canvas>
+
+    <!-- Weekly Goal Message -->
+    <div
+      id="goalMessage"
+      class="alert alert-warning text-center fs-5 fw-medium"
+      role="alert"
+    ></div>
+
+    <!-- Progress Label + Bar -->
+<div class="card text-center border-success bg-light-subtle mb-4 shadow-sm w-100">
+  <div class="card-body">
+    <h2 class="fw-bold text-dark mb-3">Goal Progress</h2>
+
+    <!-- Goal Percentage Badge -->
+    <div id="goal-progress-percent" class="goal-percentage-badge mb-2">
+      0% of weekly goal
     </div>
+
+    <!-- Actual Progress Bar -->
+    <div class="goal-progress-bar" style="width: 100%; background: #eee; height: 24px; border-radius: 12px; overflow: hidden;">
+      <div
+        id="goal-progress-fill"
+        style="width: 0%; height: 100%; background: #00c9ff; transition: width 1s ease;"
+      ></div>
+    </div>
+  </div>
+</div>
+
+    <!-- Goal Summary Table -->
+    <table class="exercise-goal-table">
+      <thead>
+        <tr>
+          <th>Goal (min/week)</th>
+          <th>Completed</th>
+          <th>Remaining</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="goal-minutes"></td>
+          <td id="completed-minutes"></td>
+          <td id="remaining-minutes"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Exercise Over Time Section -->
+    <div class="chart-header">
+      <h2>Exercise Over Time</h2>
+      <p>View your exercise time recorded over the last week, month and year.</p>
+
+      <!-- Toggle Buttons -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <button id="btn-ex-week" class="toggle-btn active">Week</button>
+        <button id="btn-ex-month" class="toggle-btn">Month</button>
+        <button id="btn-ex-year" class="toggle-btn">Year</button>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="exerciseChart"></canvas>
+    </div>
+
+    <!-- Exercise Breakdown Section -->
+    <h2 style="margin-top: 50px;">Exercise Breakdown</h2>
+    <p style="text-align: center;">
+      View how your time exercising is distributed across different exercise
+      types and intensity levels.
+    </p>
+
+    <div class="exercise-chart-row">
+      <div class="chart-wrapper">
+        <h3 style="text-align: center;">By Type</h3>
+        <canvas id="typeBreakdownChart"></canvas>
+      </div>
+      <div class="chart-wrapper">
+        <h3 style="text-align: center;">By Intensity</h3>
+        <canvas id="intensityBreakdownChart"></canvas>
+      </div>
+    </div>
+
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Goal progress
-  fetch('/api/exercise_goal_progress')
-    .then(res => res.json())
-    .then(data => {
-      if (data.status !== "success") return;
-
-      const msg = document.getElementById("goalMessage");
-      msg.textContent = data.remaining <= 0
-        ? "🎉 Congratulations! You’ve met your goal!"
-        : `You're ${data.remaining} minutes away from your goal. Keep it up! 💪`;
-      msg.style.color = data.remaining <= 0 ? "green" : "orangered";
-
-      document.getElementById("goal-minutes").textContent = data.goal;
-      document.getElementById("completed-minutes").textContent = data.completed;
-      document.getElementById("remaining-minutes").textContent = data.remaining;
-    });
-
-  // Line chart
-  fetch("/api/exercise_data")
-    .then(res => res.json())
-    .then(result => {
-      if (!result.labels || !result.minutes) return;
-
-      const ctx = document.getElementById("exerciseChart").getContext("2d");
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: result.labels,
-          datasets: [{
-            label: "Minutes of Exercise",
-            data: result.minutes,
-            borderColor: "rgba(0, 200, 200, 1)",
-            backgroundColor: "rgba(0, 200, 200, 0.2)",
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: { title: { display: true, text: "Date" } },
-            y: { title: { display: true, text: "Minutes" }, beginAtZero: true }
-          }
-        }
-      });
-    });
-
-  // Pie chart: by type
-  fetch("/api/exercise_type_breakdown")
-    .then(res => res.json())
-    .then(data => {
-      if (!data.labels || !data.minutes) return;
-
-      const ctxType = document.getElementById("typeBreakdownChart").getContext("2d");
-      new Chart(ctxType, {
-        type: "pie",
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: "Time by Type",
-            data: data.minutes,
-            backgroundColor: [
-              "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "bottom" },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.label}: ${ctx.parsed} min`
-              }
-            }
-          }
-        }
-      });
-    });
-
-  // Pie chart: by intensity
-  fetch("/api/exercise_intensity_breakdown")
-    .then(res => res.json())
-    .then(data => {
-      if (!data.labels || !data.minutes) return;
-
-      const ctxIntensity = document.getElementById("intensityBreakdownChart").getContext("2d");
-      new Chart(ctxIntensity, {
-        type: "pie",
-        data: {
-          labels: data.labels,
-          datasets: [{
-            label: "Time by Intensity",
-            data: data.minutes,
-            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"]
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: "bottom" },
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.label}: ${ctx.parsed} min`
-              }
-            }
-          }
-        }
-      });
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/exercise.js') }}"></script>
 {% endblock %}

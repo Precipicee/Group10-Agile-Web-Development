@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from datetime import date, timedelta
 from Fittrack.models import User, DailyRecord, DailyExercise
 from flask_login import current_user, login_required
@@ -39,8 +39,20 @@ def exercise_report():
 @login_required
 def exercise_data():
     user = current_user
+    range_option = request.args.get("range", "week")
 
-    records = DailyRecord.query.filter_by(user_id=user.user_id).order_by(DailyRecord.date.asc()).all()
+    today = date.today()
+    if range_option == "month":
+        start = today - timedelta(days=30)
+    elif range_option == "year":
+        start = today - timedelta(days=365)
+    else:  # default is week
+        start = today - timedelta(days=7)
+
+    records = DailyRecord.query.filter_by(user_id=user.user_id).filter(
+        DailyRecord.date >= start
+    ).order_by(DailyRecord.date.asc()).all()
+
     labels = []
     minutes = []
 
