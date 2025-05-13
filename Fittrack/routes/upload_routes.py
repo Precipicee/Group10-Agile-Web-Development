@@ -36,24 +36,18 @@ def add_record():
         flash("Invalid date format.", "danger")
         return redirect(url_for('upload_bp.upload'))
 
+    # overwrite the submission
     existing = DailyRecord.query.filter_by(user_id=user.user_id, date=record_date).first()
-    if existing and not session.get('overwrite'):
-        flash("Record already exists. Click Submit again to overwrite.", "warning")
-        session['overwrite'] = True
-        return redirect(url_for('upload_bp.upload'))
-
-    session.pop('overwrite', None)
+    if existing:
+        DailyExercise.query.filter_by(record_id=existing.record_id).delete()
+        db.session.delete(existing)
+        db.session.commit()
 
     try:
         weight = float(form_data.get('weight'))
         breakfast = form_data.get('breakfast')
         lunch = form_data.get('lunch')
         dinner = form_data.get('dinner')
-
-        if existing:
-            DailyExercise.query.filter_by(record_id=existing.record_id).delete()
-            db.session.delete(existing)
-            db.session.commit()
 
         record = DailyRecord(
             user_id=user.user_id,
@@ -90,6 +84,7 @@ def add_record():
         db.session.rollback()
         flash(f"Error: {e}", "danger")
         return redirect(url_for('upload_bp.upload'))
+
 
 @upload_bp.route('/update_record', methods=['POST'])
 @login_required
@@ -252,3 +247,21 @@ def get_record_dates():
     user = current_user
     records = DailyRecord.query.filter_by(user_id=user.user_id).all()
     return jsonify({'status': 'success', 'dates': [r.date.strftime("%Y-%m-%d") for r in records]})
+
+@upload_bp.route("/check_existing_record")
+@login_required
+def check_existing_record():
+    """
+    For AJAX call: check whether the given date has been recorded and return JSON
+    """
+    date_str = request.args.get("date")
+    if not date_str:
+        return jsonify({"error": "Missing date parameter."}), 400
+
+    try:
+        record_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format."}), 400
+
+    existing = DailyRecord.query.filter_by(user_id=current_user.user_id, date=record_date).first()
+    return jsonify({"exists": bool(existing)})
