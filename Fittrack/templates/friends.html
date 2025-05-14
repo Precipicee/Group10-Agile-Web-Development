@@ -3,34 +3,38 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 {% block content %}
-<div class="profile">
-  <h2 class="profile-title">👥 Friend Management</h2>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/friends.css') }}">
 
-  <div class="profile-item">
-    <strong>Add a Friend:</strong>
-    <input type="text" id="friend-username" class="profile-edit-input" placeholder="Enter username" />
-    <button id="btn-send-request" class="edit-btn" style="margin-left: 10px;">Send Request</button>
-  </div>
+<div class="friends-layout">
+  <div class="profile">
+    <h2 class="profile-title">👥 Friend Management</h2>
 
-  <hr />
+    <div class="profile-item">
+      <strong>Add a Friend:</strong>
+      <input type="text" id="friend-username" class="profile-edit-input" placeholder="Enter username" />
+      <button id="btn-send-request" class="edit-btn" style="margin-left: 10px;">Send Request</button>
+    </div>
 
-  <div class="profile-item">
-    <strong>Friend Requests Received:</strong>
-    <div id="received-requests-container" style="margin-top: 5px;">Loading...</div>
-  </div>
+    <hr />
 
-  <hr />
+    <div class="profile-item">
+      <strong>Friend Requests Received:</strong>
+      <div id="received-requests-container" style="margin-top: 5px;">Loading...</div>
+    </div>
 
-  <div class="profile-item">
-    <strong>Friend Requests Sent:</strong>
-    <div id="sent-requests-container" style="margin-top: 5px;">Loading...</div>
-  </div>
+    <hr />
 
-  <hr />
+    <div class="profile-item">
+      <strong>Friend Requests Sent:</strong>
+      <div id="sent-requests-container" style="margin-top: 5px;">Loading...</div>
+    </div>
 
-  <div class="profile-item">
-    <strong>Your Friends:</strong>
-    <div id="friends-list-container" style="margin-top: 5px;">Loading...</div>
+    <hr />
+
+    <div class="profile-item">
+      <strong>Your Friends:</strong>
+      <div id="friends-list-container" style="margin-top: 5px;">Loading...</div>
+    </div>
   </div>
 </div>
 {% endblock %}

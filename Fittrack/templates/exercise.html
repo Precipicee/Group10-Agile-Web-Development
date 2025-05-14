@@ -2,49 +2,34 @@
 {% block title %}Exercise Report - FitTrack{% endblock %}
 
 {% block content %}
-<div class="weight-history">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/exercise.css') }}">
+
+<div class="upload-history-layout">
   <h1>Exercise History</h1>
 
-  <div class="content-box">
+  <!-- Summary Card -->
+  <div class="card-box">
+    <h2>Weekly Summary</h2>
 
-    <!-- Exercise Minutes Card -->
-    <div class="card text-center border-primary bg-light-subtle mb-3 shadow-sm">
-      <div class="card-body">
-        <h2 class="fw-bold text-dark">
-          Exercise Minutes This Week:
-          <span class="gradient-text" id="exercise-minutes-this-week">—</span>
-        </h2>
+    <p class="summary-values">
+      Exercise Minutes This Week:
+      <span class="gradient-text" id="exercise-minutes-this-week">—</span>
+    </p>
+
+    <div id="goalMessage" class="alert alert-warning text-center fs-5 fw-medium" role="alert">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="bmi-progress-wrapper">
+      <h3 class="text-center mb-3">Goal Progress</h3>
+      <div id="goal-progress-percent" class="goal-percentage-badge mb-2 text-center">
+        0% of weekly goal
+      </div>
+      <div class="goal-progress-bar">
+        <div id="goal-progress-fill"></div>
       </div>
     </div>
 
-    <!-- Weekly Goal Message -->
-    <div
-      id="goalMessage"
-      class="alert alert-warning text-center fs-5 fw-medium"
-      role="alert"
-    ></div>
-
-    <!-- Progress Label + Bar -->
-<div class="card text-center border-success bg-light-subtle mb-4 shadow-sm w-100">
-  <div class="card-body">
-    <h2 class="fw-bold text-dark mb-3">Goal Progress</h2>
-
-    <!-- Goal Percentage Badge -->
-    <div id="goal-progress-percent" class="goal-percentage-badge mb-2">
-      0% of weekly goal
-    </div>
-
-    <!-- Actual Progress Bar -->
-    <div class="goal-progress-bar" style="width: 100%; background: #eee; height: 24px; border-radius: 12px; overflow: hidden;">
-      <div
-        id="goal-progress-fill"
-        style="width: 0%; height: 100%; background: #00c9ff; transition: width 1s ease;"
-      ></div>
-    </div>
-  </div>
-</div>
-
-    <!-- Goal Summary Table -->
     <table class="exercise-goal-table">
       <thead>
         <tr>
@@ -61,6 +46,7 @@
         </tr>
       </tbody>
     </table>
+  </div>
     
     {% if not shared_user %}
     <h2>Share Exercise Report</h2>
@@ -82,41 +68,41 @@
     {% endif %}
 
 
-    <!-- Exercise Over Time Section -->
-    <div class="chart-header">
-      <h2>Exercise Over Time</h2>
-      <p>View your exercise time recorded over the last week, month and year.</p>
+ 
 
-      <!-- Toggle Buttons -->
-      <div style="text-align: center; margin-bottom: 20px;">
-        <button id="btn-ex-week" class="toggle-btn active">Week</button>
-        <button id="btn-ex-month" class="toggle-btn">Month</button>
-        <button id="btn-ex-year" class="toggle-btn">Year</button>
-      </div>
+
+  <!-- Over Time Chart Card -->
+  <div class="card-box">
+    <h2>Exercise Over Time</h2>
+    <p class="text-center">View your exercise time recorded over the last week, month and year.</p>
+
+    <div class="text-center mb-3">
+      <button id="btn-ex-week" class="toggle-btn active">Week</button>
+      <button id="btn-ex-month" class="toggle-btn">Month</button>
+      <button id="btn-ex-year" class="toggle-btn">Year</button>
     </div>
 
     <div class="chart-container">
       <canvas id="exerciseChart"></canvas>
     </div>
+  </div>
 
-    <!-- Exercise Breakdown Section -->
-    <h2 style="margin-top: 50px;">Exercise Breakdown</h2>
-    <p style="text-align: center;">
-      View how your time exercising is distributed across different exercise
-      types and intensity levels.
+  <!-- Breakdown Card -->
+  <div class="card-box">
+    <h2>Exercise Breakdown</h2>
+    <p class="text-center">
+      View how your time exercising is distributed across different types and intensity levels.
     </p>
-
     <div class="exercise-chart-row">
       <div class="chart-wrapper">
-        <h3 style="text-align: center;">By Type</h3>
+        <h3 class="text-center">By Type</h3>
         <canvas id="typeBreakdownChart"></canvas>
       </div>
       <div class="chart-wrapper">
-        <h3 style="text-align: center;">By Intensity</h3>
+        <h3 class="text-center">By Intensity</h3>
         <canvas id="intensityBreakdownChart"></canvas>
       </div>
     </div>
-
   </div>
 </div>
 {% endblock %}

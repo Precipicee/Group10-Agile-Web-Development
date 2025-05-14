@@ -2,100 +2,60 @@
 {% block title %}Weight Report - FitTrack{% endblock %}
 
 {% block content %}
-<div class="weight-history">
-  <h1>Weight History</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/weight.css') }}">
 
-  <div class="content-box">
 
-    <!-- Current Weight and BMI Value Cards -->
-    <div class="container">
-      <div class="row row-cols-1 row-cols-lg-2 g-3 mb-3">
-        <div class="col">
-          <div class="card text-center border-primary bg-light-subtle shadow-sm h-100">
-            <div class="card-body">
-              <h2 class="cur-weight-card fw-bold text-dark mb-0">
-                Current Weight: <span class="gradient-text" id="current-weight-big"></span>
-              </h2>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card text-center border-success bg-light-subtle shadow-sm h-100">
-            <div class="card-body">
-              <h2 class="cur-weight-card fw-bold text-dark mb-0">
-                BMI: <span class="gradient-text" id="bmi-value"></span>
-              </h2>
-            </div>
+<div class="upload-history-layout">
+  <!-- Overview Card -->
+  <div class="card-box">
+    <h2 class="text-center mb-4">Weight Overview</h2>
+
+    <div class="row row-cols-1 row-cols-lg-2 g-3 mb-3">
+      <div class="col">
+        <div class="card text-center border-primary bg-light-subtle shadow-sm h-100">
+          <div class="card-body">
+            <h4 class="cur-weight-card fw-bold text-dark mb-0">
+              Current Weight:<br><span class="gradient-text" id="current-weight-big"></span>
+            </h4>
           </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Goal Message -->
-    <div class="alert alert-warning text-center fs-5 fw-medium" role="alert" id="goal-message">
-      <!-- Populated by JS -->
-    </div>
-
-    <!-- BMI Progress Bar -->
-     <div class="container">
-      <div class="row mb-4">
-        <div class="col">
-          <div class="card border-success bg-light-subtle shadow-sm h-100">
-            <div class="card-body">
-              <h2 class="fw-bold text-dark mb-3 text-center">BMI Progress</h2>
-
-              <!-- BMI Arrow Indicator (higher above the bar) -->
-              <div style="position: relative; width: 100%; height: 80px;">
-                <div id="bmi-arrow" style="position: absolute; left: 0; top: 0; width: 60px; pointer-events: none; z-index: 10;">
-                  <div style="display: flex; flex-direction: column; align-items: center;">
-                    <span id="bmi-label" class="fw-bold text-dark" style="font-size: 1rem; white-space: nowrap; background: #fff; padding: 0 4px; border-radius: 4px;">BMI: --</span>
-                    <span style="font-size: 1.5rem; color: #222; line-height: 1;">&#x25BC;</span>
-                  </div>
-                </div>
-                <!-- BMI Category Segments Bar -->
-                <div class="position-relative" style="
-                  position: absolute;
-                  left: 0;
-                  top: 48px;
-                  width: 100%;
-                  height: 30px;
-                  background: linear-gradient(to right,
-                    #0dcaf0 0%,      /* Underweight (10–18.4) */
-                    #0dcaf0 28%,
-                    #198754 28%,     /* Normal (18.5–24.9) */
-                    #198754 50%,
-                    #ffc107 50%,     /* Overweight (25–29.9) */
-                    #ffc107 67%,
-                    #dc3545 67%,     /* Obese (30–40) */
-                    #dc3545 100%);
-                  border-radius: 5px;
-                  overflow: hidden;
-                ">
-                  <!-- BMI Category Separators -->
-                  <div style="position: absolute; left: 28%; top: 0; width: 2px; height: 100%; background: #888; opacity: 1; z-index: 2;"></div>
-                  <div style="position: absolute; left: 50%; top: 0; width: 2px; height: 100%; background: #888; opacity: 1; z-index: 2;"></div>
-                  <div style="position: absolute; left: 67%; top: 0; width: 2px; height: 100%; background: #888; opacity: 1; z-index: 2;"></div>
-                
-                  <!-- Category Labels: Centered in each section -->
-                  <span style="position: absolute; left: 14%; top: 50%; transform: translate(-50%, -50%);"
-                        class="small fw-semibold text-muted">Underweight</span>
-                  <span style="position: absolute; left: 39%; top: 50%; transform: translate(-50%, -50%);"
-                        class="small fw-semibold text-muted">Normal</span>
-                  <span style="position: absolute; left: 58.5%; top: 50%; transform: translate(-50%, -50%);"
-                        class="small fw-semibold text-muted">Overweight</span>
-                  <span style="position: absolute; left: 83.5%; top: 50%; transform: translate(-50%, -50%);"
-                        class="small fw-semibold text-muted">Obese</span>
-                </div>
-              </div>
-            </div>
+      <div class="col">
+        <div class="card text-center border-success bg-light-subtle shadow-sm h-100">
+          <div class="card-body">
+            <h4 class="cur-weight-card fw-bold text-dark mb-0">
+              BMI: <br><span class="gradient-text" id="bmi-value"></span>
+            </h4>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Weight Summary -->
-    <div class="weight-summary">
-      <h2>Weight Summary</h2>
+    <div class="alert alert-warning text-center fs-5 fw-medium" role="alert" id="goal-message"></div>
+
+    <div class="bmi-progress-wrapper">
+      <h4 class="text-center fw-bold mb-3">BMI Progress</h4>
+      <div style="position: relative; width: 100%; height: 80px;">
+        <div id="bmi-arrow">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <span id="bmi-label">BMI: --</span>
+            <span style="font-size: 1.5rem; color: #222; line-height: 1;">&#x25BC;</span>
+          </div>
+        </div>
+        <div class="position-relative" style="position: absolute; top: 48px; width: 100%; height: 30px; background: linear-gradient(to right, #0dcaf0 0%, #0dcaf0 28%, #198754 28%, #198754 50%, #ffc107 50%, #ffc107 67%, #dc3545 67%, #dc3545 100%); border-radius: 5px;">
+          <div style="position: absolute; left: 28%; width: 2px; height: 100%; background: #888;"></div>
+          <div style="position: absolute; left: 50%; width: 2px; height: 100%; background: #888;"></div>
+          <div style="position: absolute; left: 67%; width: 2px; height: 100%; background: #888;"></div>
+          <span style="position: absolute; left: 14%; top: 50%; transform: translate(-50%, -50%);" class="small fw-semibold text-muted">Underweight</span>
+          <span style="position: absolute; left: 39%; top: 50%; transform: translate(-50%, -50%);" class="small fw-semibold text-muted">Normal</span>
+          <span style="position: absolute; left: 58.5%; top: 50%; transform: translate(-50%, -50%);" class="small fw-semibold text-muted">Overweight</span>
+          <span style="position: absolute; left: 83.5%; top: 50%; transform: translate(-50%, -50%);" class="small fw-semibold text-muted">Obese</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="weight-summary mt-5">
+      <h4>Weight Summary</h4>
       <table class="weight-summary-table">
         <thead>
           <tr>
@@ -113,14 +73,16 @@
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- Weight Chart -->
-    <div class="chart-header">
-      <h2>Weight Over Time</h2>
-    </div>
-    <div class="chart-container" style="width: 100%; max-width: 800px; margin: auto;">
+  <!-- Weight Chart -->
+  <div class="card-box">
+    <h2 class="text-center">Weight Over Time</h2>
+    <div class="chart-container">
       <canvas id="weight-chart"></canvas>
     </div>
+  </div>
+
 
 
     {% if not shared_user %}
@@ -137,158 +99,27 @@
     {% endif %}
 
 
-
-    <!-- Weight Log Table -->
-    <div class="table-container" style="margin-top: 40px;">
-      <h2>Weight Log</h2>
-      <table style="width: 100%; border-collapse: collapse;">
+  <!-- Weight Log -->
+  <div class="card-box">
+    <h2 class="text-center">Weight Log</h2>
+    <div class="table-container">
+      <table>
         <thead>
           <tr>
-            <th style="border: 1px solid #ccc; padding: 8px;">Date</th>
-            <th style="border: 1px solid #ccc; padding: 8px;">Weight (kg)</th>
+            <th>Date</th>
+            <th>Weight (kg)</th>
           </tr>
         </thead>
-        <tbody id="weight-table-body">
-          <!-- Populated by JS -->
-        </tbody>
+        <tbody id="weight-table-body"></tbody>
       </table>
     </div>
-
-
   </div>
 </div>
 {% endblock %}
 
+
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const pathParts = window.location.pathname.split('/');
-  const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
+<script src="{{ url_for('static', filename='js/weight.js') }}"></script>
 
-  let url = "/weight_data";
-  if (userId) url += `?user_id=${userId}`;
-
-  fetch(url)
-    .then(res => res.json())
-    .then(result => {
-      if (result.status !== "success") {
-        alert("Failed to load weight data");
-        return;
-      }
-      const table = document.getElementById("weight-table-body");
-      table.innerHTML = "";
-
-      const userHeight = parseFloat(result.height);
-      const targetWeight = parseFloat(result.target_weight);
-
-      result.data.forEach(entry => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td style="border: 1px solid #ccc; padding: 8px;">${entry.date}</td>
-          <td style="border: 1px solid #ccc; padding: 8px;">${entry.weight}</td>
-        `;
-        table.appendChild(row);
-      });
-
-      const weights = result.data.map(entry => entry.weight);
-      const dates = result.data.map(entry => new Date(entry.date));
-
-      const minWeight = Math.min(...weights);
-      const maxWeight = Math.max(...weights);
-      const startingWeight = weights[0];
-      const currentWeight = weights[weights.length - 1];
-      const oneMonthAgoDate = new Date();
-      oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
-
-      let weightOneMonthAgo = "N/A";
-      for (let i = weights.length - 1; i >= 0; i--) {
-        if (dates[i] <= oneMonthAgoDate) {
-          weightOneMonthAgo = weights[i];
-          break;
-        }
-      }
-
-      document.getElementById("current-weight-big").textContent = currentWeight ? `${currentWeight} kg` : "N/A";
-      document.getElementById("current-weight").textContent = currentWeight || "N/A";
-      document.getElementById("target-weight").textContent = targetWeight || "N/A";
-      document.getElementById("weight-one-month-ago").textContent = weightOneMonthAgo;
-
-      updateBMIProgress(currentWeight, userHeight);
-
-      const goalMessage = document.getElementById("goal-message");
-      if (currentWeight && targetWeight) {
-        const diff = Math.abs(currentWeight - targetWeight).toFixed(1);
-        if (diff < 0.1) {
-          goalMessage.innerHTML = 'Good job! You’ve reached your goal weight!';
-        } else if (diff < 2) {
-          goalMessage.innerHTML = `Almost there! You are <span class="gradient-text fw-bold">${diff} kg</span> away from your target weight.`;
-        } else {
-          goalMessage.innerHTML = `Keep going! You are <span class="gradient-text fw-bold">${diff} kg</span> away from your target weight.`;
-        }
-      }
-
-      const ctx = document.getElementById("weight-chart").getContext("2d");
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: result.data.map(entry => entry.date),
-          datasets: [{
-            label: "Weight",
-            data: result.data.map(entry => entry.weight),
-            borderColor: "rgba(75, 192, 192, 1)",
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
-            fill: true,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: "Date"
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: "Weight (kg)"
-              },
-              beginAtZero: false,
-              min: Math.floor(minWeight / 5) * 5 - 5,
-              max: Math.floor(maxWeight / 5) * 5 + 5,
-              ticks: {
-                stepSize: 5
-              }
-            }
-          }
-        }
-      });
-    });
-});
-
-function updateBMIProgress(currentWeight, userHeight) {
-  const bmiLabel = document.getElementById("bmi-label");
-  const bmiArrow = document.getElementById("bmi-arrow");
-
-  if (!bmiLabel || !bmiArrow) return;
-
-  if (!currentWeight || !userHeight) {
-    bmiLabel.textContent = "BMI: N/A";
-    bmiArrow.style.left = "0%";
-    return;
-  }
-
-  const bmi = (currentWeight / ((userHeight / 100) ** 2)).toFixed(1);
-  document.getElementById("bmi-value").textContent = bmi;
-  const bmiClamped = Math.min(Math.max(bmi, 10), 40);
-  const percent = ((bmiClamped - 10) / 30) * 100;
-
-  bmiLabel.textContent = `BMI: ${bmi}`;
-  // Center the arrow by shifting left by half its width (assume ~40px)
-  bmiArrow.style.left = `calc(${percent}% - 20px)`;
-}
-</script>
 {% endblock %}

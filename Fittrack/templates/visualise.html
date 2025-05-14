@@ -2,13 +2,16 @@
 {% block title %}Reports - FitTrack{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
+
+
 <div class="reports">
-  <h1>📊 My Report</h1>
+  <h1>My Report</h1>
   <div class="reports__container">
 
     <!-- Weight Report Card -->
     <div class="reports__card">
-      <img src="/static/images/weight.png" alt="weight icon" class="services__img" />
+      <img src="/static/images/weightreport.png" alt="weight icon" class="services__img" />
       <h2>Weight Report</h2>
       <p>See how your weight has changed!</p>
       <button id="btn-weight" class="btn-report">Check Weight Report</button>
@@ -16,7 +19,7 @@
 
     <!-- Exercise Report Card -->
     <div class="reports__card">
-      <img src="/static/images/report.png" alt="report icon" class="services__img" />
+      <img src="/static/images/exercisereport.png" alt="report icon" class="services__img" />
       <h2>Exercise Report</h2>
       <p>Is your lifestyle reasonable?</p>
       <button id="btn-exercise-report" class="btn-report">Check Exercise Report</button>
@@ -24,7 +27,7 @@
 
     <!-- Diet Analysis Card -->
     <div class="reports__card">
-      <img src="/static/images/report.png" alt="report icon" class="services__img" />
+      <img src="/static/images/dietreport.png" alt="report icon" class="services__img" />
       <h2>Diet Analysis</h2>
       <p>Improve your health!</p>
       <button id="btn-report-analysis" class="btn-report">Check Diet Analysis</button>
