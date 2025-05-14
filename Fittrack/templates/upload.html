@@ -2,72 +2,110 @@
 {% block title %}Upload - FitTrack{% endblock %}
 
 {% block content %}
-<div class="record">
-  <h1>Record Your Data</h1>
-  <p>Keep track of your health data to generate meaningful insights.</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}">
 
-  <form class="record__form" id="recordForm" method="POST" action="{{ url_for('upload_bp.add_record') }}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="upload-history-layout">
 
-    <div class="record__group">
-      <label for="date">Date</label>
-      <input type="date" id="date" name="date" required value="{{ form_data.get('date', '') }}">
-    </div>
+  <!-- Upload Form -->
+  <div class="card-box">
+    <h2>Record Your Data</h2>
+    <form class="record__form" id="recordForm" method="POST" action="{{ url_for('upload_bp.add_record') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <div class="record__group">
-      <label for="weight">Today's Weight (kg)</label>
-      <input type="number" id="weight" name="weight" step="0.01" required value="{{ form_data.get('weight', '') }}">
-    </div>
-
-    <div class="record__group">
-      <label class="tooltip-container">
-        Meals
-        <i class="fa-solid fa-circle-info tooltip-icon"></i>
-        <span class="custom-tooltip">
-          If you skipped a meal,<br> type "NO". <br><br>
-          Leaving it blank will auto-fill a default value.
-        </span>
-      </label>
-      <input type="text" name="breakfast" placeholder="Breakfast" value="{{ form_data.get('breakfast', '') }}" />
-      <input type="text" name="lunch" placeholder="Lunch" value="{{ form_data.get('lunch', '') }}" />
-      <input type="text" name="dinner" placeholder="Dinner" value="{{ form_data.get('dinner', '') }}" />
-    </div>
-
-    <div class="record__group">
-      <label class="tooltip-container">
-        Exercise Activities
-        <i class="fa-solid fa-circle-info tooltip-icon"></i>
-        <span class="custom-tooltip">
-          • Light: slow pace, frequent rests<br>
-          • Moderate: steady effort, some breaks<br>
-          • Intense: high pace, sustained effort, minimal rest
-        </span>
-      </label>
-
-      <div id="exerciseContainer">
-        <div class="exercise__entry">
-          <input type="text" name="exercise[]" placeholder="e.g. running" />
-          <input type="number" name="duration[]" placeholder="Duration (min)" min="1" />
-          <select name="intensity[]">
-            <option value="">Intensity</option>
-            <option value="light">Light</option>
-            <option value="moderate">Moderate</option>
-            <option value="intense">Intense</option>
-          </select>
-          <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
-        </div>
+      <div class="record__group">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required value="{{ form_data.get('date', '') }}">
       </div>
-      <button type="button" class="add-exercise-btn" onclick="addExerciseRow()">+ Add</button>
-    </div>
 
-    <div class="record__button-row">
-      <button type="submit" class="record__btn">Submit Record</button>
-      <button type="button" id="view-history" class="record__btn">View History</button>
+      <div class="record__group">
+        <label for="weight">Today's Weight (kg)</label>
+        <input type="number" id="weight" name="weight" step="0.01" required value="{{ form_data.get('weight', '') }}">
+      </div>
+
+      <div class="record__group">
+        <label>Meals</label>
+        <input type="text" name="breakfast" placeholder="Breakfast" value="{{ form_data.get('breakfast', '') }}" />
+        <input type="text" name="lunch" placeholder="Lunch" value="{{ form_data.get('lunch', '') }}" />
+        <input type="text" name="dinner" placeholder="Dinner" value="{{ form_data.get('dinner', '') }}" />
+      </div>
+
+      <div class="record__group">
+        <label>Exercise Activities</label>
+        <div id="exerciseContainer">
+          <div class="exercise__entry">
+            <input type="text" name="exercise[]" placeholder="e.g. running" />
+            <input type="number" name="duration[]" placeholder="Duration (min)" min="1" />
+            <select name="intensity[]">
+              <option value="">Intensity</option>
+              <option value="light">Light</option>
+              <option value="moderate">Moderate</option>
+              <option value="intense">Intense</option>
+            </select>
+            <button type="button" class="remove-entry-btn" onclick="removeThisRow(this)">−</button>
+          </div>
+        </div>
+        <button type="button" class="add-exercise-btn" onclick="addExerciseRow()">+ Add</button>
+      </div>
+
+      <div class="record__button-row">
+        <button type="submit" class="record__btn">Submit Record</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Vertical divider -->
+  <div class="vertical-divider"></div>
+
+  <!-- History viewer -->
+  <div class="card-box">
+    <div id="calendar"></div>
+
+    <div id="recordDetails">
+      <table class="details-table">
+        <thead>
+          <tr>
+            <th colspan="2">🗂 Record Details</th>
+          </tr>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Date</td><td id="record-date">—</td></tr>
+          <tr><td>Weight (kg)</td><td id="record-weight">—</td></tr>
+          <tr><td>Breakfast</td><td id="record-breakfast">—</td></tr>
+          <tr><td>Lunch</td><td id="record-lunch">—</td></tr>
+          <tr><td>Dinner</td><td id="record-dinner">—</td></tr>
+        </tbody>
+      </table>
+
+
+      <table id="exercise-table" class="details-table">
+        <thead>
+          <tr>
+            <th colspan="3">🏃 Exercise Activities</th>
+          </tr>
+          <tr>
+            <th>Type</th>
+            <th>Duration</th>
+            <th>Intensity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="3" class="empty-msg">No exercises</td></tr>
+        </tbody>
+      </table>
+
     </div>
-  </form>
+  </div>
+
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+
+
 {% endblock %}
