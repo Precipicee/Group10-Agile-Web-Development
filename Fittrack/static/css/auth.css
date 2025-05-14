@@ -1,0 +1,102 @@
+.auth {
+  background-color: #fffbea;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.auth form {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth label.form-label,
+.auth label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.auth input[type="text"],
+.auth input[type="email"],
+.auth input[type="password"],
+.auth input[type="date"],
+.auth input[type="number"],
+.auth select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth input:focus,
+.auth select:focus {
+  border-color: #fe5196;
+  box-shadow: 0 0 0 2px rgba(254, 81, 150, 0.15);
+  outline: none;
+}
+
+.form-button {
+  padding: 12px;
+  font-size: 1rem;
+  background-image: linear-gradient(to right, #f77062, #fe5196);
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form-button:hover {
+  background: #4837ff;
+}
+
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.avatar-option {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.avatar-option:hover {
+  transform: scale(1.05);
+}
+
+.avatar-option.selected {
+  border: 2px solid #00c9ff;
+  box-shadow: 0 0 8px #00c9ff;
+}

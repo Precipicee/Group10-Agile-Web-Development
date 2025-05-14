@@ -1,0 +1,90 @@
+.profile {
+  background-color: #fffbea;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.profile-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.avatar-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #00c9ff;
+  object-fit: cover;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px 40px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.profile-item,
+.profile-item-wide {
+  background-color: #ffffff;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  font-size: 1rem;
+}
+
+.profile-item-wide {
+  grid-column: span 2;
+}
+
+.profile-item strong,
+.profile-item-wide strong {
+  display: block;
+  color: #444;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.edit-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #ddd;
+}
+
+/* change password button */
+.btn.btn-danger {
+  font-size: 1rem; 
+  padding: 10px 24px;
+  background-image: linear-gradient(to top, #f77062 0%, #fe5196 100%);
+  border: none;
+  border-radius: 4px;
+  color: #fff; 
+  margin-top: 1.5rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+  outline: none;
+  text-decoration: none; 
+}
+
+.btn.btn-danger:hover {
+  background-color: #c82333;
+}
