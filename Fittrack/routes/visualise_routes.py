@@ -231,3 +231,91 @@ def view_shared_report(user_id, type):
 
     else:
         return "Invalid report type", 400
+
+@visualise_bp.route("/report/diet")
+@login_required
+def diet_report():
+    return render_template("diet.html")
+
+def infer_calorie_goal(user):
+    if user.current_weight is None or user.target_weight is None:
+        return "maintain"  # fallback
+    if user.target_weight < user.current_weight - 1:
+        return "lose"
+    elif user.target_weight > user.current_weight + 1:
+        return "gain"
+    else:
+        return "maintain"
+
+def infer_activity_level(user):
+    minutes = user.target_exercise_time_per_week or 0
+
+    if minutes < 30:
+        return "sedentary"
+    elif minutes < 90:
+        return "light"
+    elif minutes < 180:
+        return "moderate"
+    elif minutes < 300:
+        return "active"
+    else:
+        return "very_active"
+    
+def calculate_recommended_calories(user):
+    if not all([user.age, user.height, user.current_weight, user.gender]):
+        return None  # Incomplete data
+
+    # Sanitize gender input
+    gender = user.gender.strip().lower()
+
+    # BMR calculation
+    if gender == 'male':
+        bmr = 10 * user.current_weight + 6.25 * user.height - 5 * user.age + 5
+    elif gender == 'female':
+        bmr = 10 * user.current_weight + 6.25 * user.height - 5 * user.age - 161
+    else:  # for 'other' or non-binary - use averaged constant
+        bmr = 10 * user.current_weight + 6.25 * user.height - 5 * user.age - 78
+
+    activity_map = {
+        'sedentary': 1.2,
+        'light': 1.375,
+        'moderate': 1.55,
+        'active': 1.725,
+        'very_active': 1.9
+    }
+
+    activity_level = infer_activity_level(user)
+    goal = infer_calorie_goal(user)
+
+    multiplier = activity_map.get(activity_level, 1.2)
+    calories = bmr * multiplier
+
+    if goal == 'lose':
+        calories -= 500
+    elif goal == 'gain':
+        calories += 500
+
+    return round(calories)
+
+@visualise_bp.route("/api/recommended_calories")
+@login_required
+def recommended_calories():
+    user = current_user
+
+    # Make sure all required profile fields exist
+    if not all([user.age, user.height, user.current_weight, user.gender]):
+        return jsonify({"error": "Incomplete profile"}), 400
+
+    calories = calculate_recommended_calories(user)
+    activity_level = infer_activity_level(user)
+    goal = infer_calorie_goal(user)
+
+    return jsonify({
+        "recommended": calories,
+        "age": user.age,
+        "height": user.height,
+        "current_weight": user.current_weight,
+        "gender": user.gender,
+        "goal": goal,
+        "activity_level": activity_level
+    })
