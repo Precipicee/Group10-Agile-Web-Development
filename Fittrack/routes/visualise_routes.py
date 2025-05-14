@@ -141,7 +141,11 @@ def exercise_intensity_breakdown():
 @visualise_bp.route("/api/exercise_goal_progress")
 @login_required
 def exercise_goal_progress():
-    user = current_user
+    user_id = request.args.get("user_id")
+    if user_id:
+        user = User.query.get_or_404(user_id)
+    else:
+        user = current_user
 
     if not user or not user.target_exercise_time_per_week:
         return jsonify({
@@ -217,12 +221,12 @@ def view_shared_report(user_id, type):
     if type == "weight":
         
         user = User.query.get_or_404(user_id)
-        form.report_type.data = "weight"
+        
         return render_template("weight.html", shared_user=user, form=form)
 
     elif type == "exercise":
         user = User.query.get_or_404(user_id)
-        form.report_type.data = "exercise"
+        
         return render_template("exercise.html", shared_user=user, form=form)
 
     else:

@@ -126,12 +126,8 @@
     {% if not shared_user %}
         <h2>Share Weight Report</h2>
 
-        <form method="POST" action="{{ url_for('share_bp.share_report') }}">
+        <form method="POST" action="{{ url_for('share_bp.share_report', report_type='weight') }}">
             {{ form.hidden_tag() }}
-            {{ form.report_type(value='weight') }}
-
-
-
             <div class="form-group">
                 <label for="receiver_id">Select a friend to share with:</label>
                 {{ form.receiver_id(class="form-control") }}

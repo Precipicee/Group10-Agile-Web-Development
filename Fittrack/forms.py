@@ -77,5 +77,5 @@ class ChangePasswordForm(FlaskForm):
 
 class ShareReportForm(FlaskForm):
     receiver_id = SelectField('Share with', coerce=int, validators=[DataRequired()])
-    report_type = HiddenField('Report Type')
+    
     submit = SubmitField('Share')

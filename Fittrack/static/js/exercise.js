@@ -60,7 +60,11 @@ function loadExercisePageFeatures() {
 
 
   // Weekly Goal Message + Table
-  fetch("/api/exercise_goal_progress")
+  let goalUrl = "/api/exercise_goal_progress";
+  if (userId) goalUrl += `?user_id=${userId}`;
+
+  fetch(goalUrl)
+
     .then(res => res.json())
     .then(data => {
       if (data.status !== "success") {

@@ -3,13 +3,17 @@ from flask_login import current_user, login_required
 from .. import db
 from ..models import SharedReport, FriendRequest, User
 from ..forms import ShareReportForm
+import logging
 
 share_bp = Blueprint("share_bp", __name__)
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 @share_bp.route("/share_report", methods=["POST"])
 @login_required
 def share_report():
     form = ShareReportForm()
+    report_type = request.args.get('report_type')
 
     sent = FriendRequest.query.filter_by(from_user_id=current_user.user_id, status='accepted').all()
     received = FriendRequest.query.filter_by(to_user_id=current_user.user_id, status='accepted').all()
@@ -17,12 +21,12 @@ def share_report():
     friends = User.query.filter(User.user_id.in_(friend_ids)).all()
     form.receiver_id.choices = [(f.user_id, f.username) for f in friends]  
 
-
+    logger.debug(f"Form data: {form.data}, Report type: {report_type}")
     if form.validate_on_submit():
         receiver_id = form.receiver_id.data
-        report_type = form.report_type.data
+        
 
-        print("✅ 最终提交进来的类型是：", report_type)
+        
 
         
         is_friend = FriendRequest.query.filter(
