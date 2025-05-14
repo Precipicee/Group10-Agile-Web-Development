@@ -61,6 +61,26 @@
         </tr>
       </tbody>
     </table>
+    
+    {% if not shared_user %}
+    <h2>Share Exercise Report</h2>
+
+    <form method="POST" action="{{ url_for('share_bp.share_report') }}">
+      <p>DEBUG: rendered value = {{ form.report_type(value="exercise") }}</p>
+
+        {{ form.hidden_tag() }}
+        {{ form.report_type() }}
+
+
+
+        <div class="form-group">
+            <label for="receiver_id">Select a friend to share with:</label>
+            {{ form.receiver_id(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Share</button>
+    </form>
+    {% endif %}
+
 
     <!-- Exercise Over Time Section -->
     <div class="chart-header">
@@ -100,6 +120,7 @@
   </div>
 </div>
 {% endblock %}
+
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/exercise.js') }}"></script>

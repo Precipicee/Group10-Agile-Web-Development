@@ -108,3 +108,19 @@ class SharedAnalysis(db.Model):
 
     sender = db.relationship('User', foreign_keys=[sender_id], backref='shared_analyses_sent')
     receiver = db.relationship('User', foreign_keys=[receiver_id], backref='shared_analyses_received')
+
+from datetime import datetime
+
+
+class SharedReport(db.Model):
+    __tablename__ = 'shared_report'
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    report_type = db.Column(db.String(20), nullable=False)  # 'weight' or 'exercise'
+    record_user_id = db.Column(db.Integer, nullable=True)  
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_reports')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_reports')

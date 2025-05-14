@@ -122,6 +122,26 @@
       <canvas id="weight-chart"></canvas>
     </div>
 
+
+    {% if not shared_user %}
+        <h2>Share Weight Report</h2>
+
+        <form method="POST" action="{{ url_for('share_bp.share_report') }}">
+            {{ form.hidden_tag() }}
+            {{ form.report_type(value='weight') }}
+
+
+
+            <div class="form-group">
+                <label for="receiver_id">Select a friend to share with:</label>
+                {{ form.receiver_id(class="form-control") }}
+            </div>
+            <button type="submit" class="btn btn-primary">Share</button>
+        </form>
+    {% endif %}
+
+
+
     <!-- Weight Log Table -->
     <div class="table-container" style="margin-top: 40px;">
       <h2>Weight Log</h2>
@@ -147,7 +167,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/weight_data")
+  const pathParts = window.location.pathname.split('/');
+  const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
+
+  let url = "/weight_data";
+  if (userId) url += `?user_id=${userId}`;
+
+  fetch(url)
     .then(res => res.json())
     .then(result => {
       if (result.status !== "success") {

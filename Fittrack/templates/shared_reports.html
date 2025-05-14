@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>📬 Shared Reports</h1>
+
+
+  <form method="get" action="{{ url_for('visualise_bp.shared_reports') }}">
+    <label for="filter">Filter by report type:</label>
+    <select name="type" id="filter" onchange="this.form.submit()">
+      <option value="">All</option>
+      <option value="weight" {% if selected_type == 'weight' %}selected{% endif %}>Weight</option>
+      <option value="exercise" {% if selected_type == 'exercise' %}selected{% endif %}>Exercise</option>
+    </select>
+  </form>
+
+  {% if reports %}
+    <ul class="list-group mt-3">
+      {% for report in reports %}
+        <li class="list-group-item">
+          <strong>{{ report.report_type.capitalize() }} report</strong> from <em>{{ report.sender.username }}</em>
+          <br>
+          Shared on: {{ report.timestamp.strftime('%Y-%m-%d %H:%M') }}
+          <br>
+          <p>DEBUG sender_id = {{ report.sender_id }} / report_type = {{ report.report_type }}</p>
+
+          <a href="{{ url_for('visualise_bp.view_shared_report', user_id=report.sender_id or 1, type=report.report_type|default('weight')) }}">
+              👉 View {{ report.report_type|default('weight') }} report from {{ report.sender.username }}
+          </a>
+
+          
+          <p>Debug type: {{ report.report_type }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reports shared with you.</p>
+  {% endif %}
+{% endblock %}

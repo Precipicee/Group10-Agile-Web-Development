@@ -1,6 +1,13 @@
 // === Helper: Update the line chart for exercise ===
 function updateExerciseChart(range = "week") {
-  const url = `/api/exercise_data?range=${range}`;
+  const pathParts = window.location.pathname.split('/');
+  const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
+
+  let url = `/api/exercise_data?range=${range}`;
+  if (userId) {
+    url += `&user_id=${userId}`;
+  }
+
   fetch(url)
     .then(res => res.json())
     .then(result => {
@@ -48,6 +55,10 @@ function updateExerciseChart(range = "week") {
 
 // === Main Feature Loader ===
 function loadExercisePageFeatures() {
+  const pathParts = window.location.pathname.split('/');
+  const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
+
+
   // Weekly Goal Message + Table
   fetch("/api/exercise_goal_progress")
     .then(res => res.json())
@@ -120,7 +131,10 @@ function loadExercisePageFeatures() {
   });
 
   // Pie Chart: By Type
-  fetch("/api/exercise_type_breakdown")
+  let typeUrl = "/api/exercise_type_breakdown";
+  if (userId) typeUrl += `?user_id=${userId}`;
+  fetch(typeUrl)
+
     .then(res => res.json())
     .then(data => {
 	if (!data.labels || !data.minutes || data.minutes.length === 0) {
@@ -175,7 +189,10 @@ function loadExercisePageFeatures() {
     .catch(error => console.error("Error loading type breakdown:", error));
 
   // Pie Chart: By Intensity
-  fetch("/api/exercise_intensity_breakdown")
+  let intensityUrl = "/api/exercise_intensity_breakdown";
+  if (userId) intensityUrl += `?user_id=${userId}`;
+  fetch(intensityUrl)
+
     .then(res => res.json())
     .then(data => {
 	if (!data.labels || !data.minutes || data.minutes.length === 0) {
