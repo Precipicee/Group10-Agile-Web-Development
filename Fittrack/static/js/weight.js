@@ -1,6 +1,11 @@
-
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/weight_data")
+  const pathParts = window.location.pathname.split('/');
+  const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
+
+  let url = "/weight_data";
+  if (userId) url += `?user_id=${userId}`;
+
+  fetch(url)
     .then(res => res.json())
     .then(result => {
       if (result.status !== "success") {
