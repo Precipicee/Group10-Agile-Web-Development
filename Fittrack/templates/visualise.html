@@ -6,28 +6,28 @@
   <h1>📊 My Report</h1>
   <div class="reports__container">
 
-    <!-- Weight Report -->
+    <!-- Weight Report Card -->
     <div class="reports__card">
       <img src="/static/images/weight.png" alt="weight icon" class="services__img" />
       <h2>Weight Report</h2>
       <p>See how your weight has changed!</p>
-      <button id="btn-weight">Check Weight Report</button>
+      <button id="btn-weight" class="btn-report">Check Weight Report</button>
     </div>
 
-    <!-- Diet & Exercise Report -->
+    <!-- Exercise Report Card -->
     <div class="reports__card">
       <img src="/static/images/report.png" alt="report icon" class="services__img" />
       <h2>Exercise Report</h2>
       <p>Is your lifestyle reasonable?</p>
-      <button id="btn-exercise-report">Check Diet & Exercise Report</button>
+      <button id="btn-exercise-report" class="btn-report">Check Exercise Report</button>
     </div>
 
-    <!-- Analysis -->
+    <!-- Diet Analysis Card -->
     <div class="reports__card">
       <img src="/static/images/report.png" alt="report icon" class="services__img" />
-      <h2>Analysis</h2>
-      <p>Analyze and improve your health</p>
-      <button id="btn-report-analysis">Check</button>
+      <h2>Diet Analysis</h2>
+      <p>Improve your health!</p>
+      <button id="btn-report-analysis" class="btn-report">Check Diet Analysis</button>
     </div>
 
   </div>
@@ -36,17 +36,18 @@
 
 {% block scripts %}
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("btn-weight")?.addEventListener("click", () => {
-      window.location.href = "/report/weight";
-    });
+  document.addEventListener('DOMContentLoaded', () => {
+    // Navigate to report pages based on button ID
+    const routes = {
+      'btn-weight': '/report/weight',
+      'btn-exercise-report': '/report/exercise',
+      'btn-report-analysis': '/report/analysis'
+    };
 
-    document.getElementById("btn-exercise-report")?.addEventListener("click", () => {
-      window.location.href = "/report/exercise";
-    });
-
-    document.getElementById("btn-report-analysis")?.addEventListener("click", () => {
-      window.location.href = "/report/analysis";
+    Object.entries(routes).forEach(([id, path]) => {
+      document.getElementById(id)?.addEventListener('click', () => {
+        window.location.href = path;
+      });
     });
   });
 </script>

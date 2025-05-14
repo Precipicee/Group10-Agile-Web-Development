@@ -5,6 +5,7 @@ def register_blueprints(app):
     from .upload_routes import upload_bp
     from .visualise_routes import visualise_bp
     from .friends_routes import friends_bp  
+    from .share_routes import share_bp
     
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
@@ -12,3 +13,4 @@ def register_blueprints(app):
     app.register_blueprint(upload_bp)
     app.register_blueprint(visualise_bp)
     app.register_blueprint(friends_bp)
+    app.register_blueprint(share_bp)

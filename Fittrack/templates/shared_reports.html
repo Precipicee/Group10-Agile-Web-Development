@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Shared Reports - FitTrack{% endblock %}
+
+{% block content %}
+<div class="profile">
+  <h2 class="profile-title">📬 Reports Shared With You</h2>
+
+  {% if shared_reports %}
+    <div class="profile-item">
+      <ul style="list-style-type: none; padding: 0;">
+        {% for report in shared_reports %}
+          <li style="margin-bottom: 1rem; padding: 1rem; border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9;">
+            <strong>From:</strong> {{ report.sender.username }}<br>
+            <strong>Type:</strong> {{ report.report_type }}<br>
+            <strong>Date:</strong> {{ report.timestamp.strftime('%Y-%m-%d') }}<br>
+
+            <a href="{{ url_for('visualise_bp.view_shared_report', report_type=report.report_type, user_id=report.sender_id) }}"
+              class="btn btn-success btn-sm mt-2">
+              View Report
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% else %}
+    <p>No one has shared any reports with you yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

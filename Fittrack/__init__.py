@@ -4,6 +4,8 @@ from .models import db, User
 from .config import Config
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+load_dotenv()
 
 csrf = CSRFProtect()
 login_manager = LoginManager()

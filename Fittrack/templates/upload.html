@@ -65,6 +65,20 @@
       <button type="button" id="view-history" class="record__btn">View History</button>
     </div>
   </form>
+  {% if form_data.total_calories or form_data.calories_burned %}
+    <div class="estimated-calories" style="margin-top: 1rem; padding: 1rem; background: #f8f8f8; border-left: 4px solid #4CAF50;">
+      <h4>Estimated Meal Calories (intake):</h4>
+      <p><strong>{{ form_data.total_calories or 'N/A' }} kcal</strong></p>
+
+      <h4>Estimated Exercise Calories Burned:</h4>
+      <p><strong>{{ form_data.calories_burned or 'N/A' }} kcal</strong></p>
+
+      {% if form_data.total_calories and form_data.calories_burned %}
+        <h4>Net Calories (intake - burned):</h4>
+        <p><strong>{{ form_data.total_calories - form_data.calories_burned }} kcal</strong></p>
+      {% endif %}
+    </div>
+  {% endif %}
 </div>
 {% endblock %}
 

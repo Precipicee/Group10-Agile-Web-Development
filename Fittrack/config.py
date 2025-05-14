@@ -1,6 +1,7 @@
 import os
 
 class Config:
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
     SECRET_KEY = os.environ.get("SECRET_KEY", "group10")  
     WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY", "another-strong-secret")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///users.db")

@@ -7,6 +7,8 @@
 
   <div class="content-box">
 
+  
+
     <!-- Current Weight and BMI Value Cards -->
     <div class="container">
       <div class="row row-cols-1 row-cols-lg-2 g-3 mb-3">
@@ -137,6 +139,27 @@
         </tbody>
       </table>
     </div>
+        <!-- Share Weight Report -->
+        <hr>
+        <div class="share-report">
+          <h3>📤 Share Your Weight Report</h3>
+          <form method="POST" action="{{ url_for('share_routes.share_report') }}">
+            {{ share_form.hidden_tag() }}
+            {{ share_form.report_type(value=report_type) }}
+
+    
+            <div class="mb-3">
+              <label for="receiver_id" class="form-label">Select Friend to Share With:</label>
+              {{ share_form.receiver_id(class="form-select") }}
+            </div>
+            <button type="submit" class="btn btn-primary">📤 Share</button>
+
+          </form>
+          <script>
+            console.log("Weight Report - report_type:", document.querySelector('input[name="report_type"]').value);
+          </script>
+        </div>
+    
 
 
   </div>
@@ -147,7 +170,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("/weight_data")
+  fetch("/weight_data{% if shared_user %}?user_id={{ shared_user.user_id }}{% endif %}")
+
     .then(res => res.json())
     .then(result => {
       if (result.status !== "success") {

@@ -1,4 +1,6 @@
 from flask_wtf import FlaskForm
+from wtforms import SelectField, HiddenField, SubmitField
+from wtforms.validators import DataRequired
 from wtforms import (
     StringField, PasswordField, SubmitField, BooleanField,
     DateField, RadioField, IntegerField, FloatField, HiddenField
@@ -40,3 +42,8 @@ class EditProfileForm(FlaskForm):
     target_exercise_time_per_week = IntegerField('Exercise per Week', validators=[Optional()])
     target_exercise_timeframe_days = IntegerField('Exercise Plan Duration', validators=[Optional()])
     submit = SubmitField('Save Changes')
+
+class ShareForm(FlaskForm):
+    receiver_id = SelectField("Share with", coerce=int)
+    report_type = HiddenField() 
+    submit = SubmitField("Share")

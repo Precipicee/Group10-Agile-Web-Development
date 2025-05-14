@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Friends - FitTrack{% endblock %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 {% block content %}
 <div class="profile">
@@ -44,11 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const username = document.getElementById("friend-username").value.trim();
     if (!username) return alert("Please enter a username");
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
     const res = await fetch("/add_friend", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken  
+      },
       body: JSON.stringify({ to_username: username })
     });
+
 
     const result = await res.json();
     alert(result.message || "Friend request sent");
@@ -98,16 +105,23 @@ document.addEventListener("DOMContentLoaded", () => {
     friends.forEach(f => {
       const div = document.createElement("div");
       div.className = "friend-entry";
-      div.textContent = f.username;
+      div.innerHTML = `
+        ${f.username}
+        <button class="edit-btn" style="margin-left:10px;" onclick="openShareModal('${f.username}', ${f.user_id})">
+          Share Record
+        </button>
+      `;
       container.appendChild(div);
     });
   }
 
   // Expose for onclick
   window.handleRequest = async function(requestId, action) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
     const res = await fetch("/respond_request", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" , "X-CSRFToken": csrfToken },
       body: JSON.stringify({ request_id: requestId, action })
     });
 
@@ -116,5 +130,72 @@ document.addEventListener("DOMContentLoaded", () => {
     location.reload();
   };
 });
+let selectedFriendId = null;
+
+window.openShareModal = async function(username, userId) {
+  selectedFriendId = userId;
+  document.getElementById("share-friend-name").textContent = username;
+
+  const res = await fetch("/record_dates");
+  const data = await res.json();
+
+  const select = document.getElementById("record-select");
+  select.innerHTML = "";
+
+  if (!data.dates.length) {
+    select.innerHTML = "<option>No records available</option>";
+  } else {
+    data.dates.forEach(date => {
+      select.innerHTML += `<option value="${date}">${date}</option>`;
+    });
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById("shareModal"));
+  modal.show();
+};
+
+window.shareSelectedRecord = async function () {
+  const date = document.getElementById("record-select").value;
+  const res = await fetch(`/record_details/${date}`);
+  const data = await res.json();
+
+  if (data.status !== "success") {
+    alert("Record not found or cannot be shared");
+    return;
+  }
+
+  console.log("DEBUG → data.data:", data.data);
+  console.log("DEBUG → selectedFriendId:", selectedFriendId);
+
+
+  const recordId = data.data.record_id;
+
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+  const response = await fetch(`/upload/share/${recordId}/${selectedFriendId}`, {
+    method: "POST",
+    headers: {
+    "X-CSRFToken": csrfToken
+  }
+  });
+
+  if (response.redirected) {
+    window.location.href = response.url;
+  } else {
+    alert("Shared!");
+  }
+};
+
 </script>
+<!-- Share Record Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="padding: 20px;">
+      <h4>Share a Record with <span id="share-friend-name"></span></h4>
+      <select id="record-select" class="form-control" style="margin-top:10px;"></select>
+      <button class="btn btn-primary" style="margin-top: 10px;" onclick="shareSelectedRecord()">Share</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

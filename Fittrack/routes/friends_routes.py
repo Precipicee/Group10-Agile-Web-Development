@@ -56,13 +56,9 @@ def get_friend_data():
     friends = User.query.filter(User.user_id.in_(friend_ids)).all()
 
     return jsonify({
-        "received_requests": [
-            {"id": r.id, "from_user": r.from_user.username if r.from_user else "(unknown)"} for r in received
-        ],
-        "sent_requests": [
-            {"id": r.id, "to_user": r.to_user.username if r.to_user else "(unknown)", "status": r.status} for r in sent
-        ],
-        "friends": [{"username": f.username} for f in friends]
+        "received_requests": [            {"id": r.id, "from_user": r.from_user.username if r.from_user else "(unknown)"} for r in received        ],
+        "sent_requests": [            {"id": r.id, "to_user": r.to_user.username if r.to_user else "(unknown)", "status": r.status} for r in sent        ],
+        "friends": [{"username": f.username, "user_id": f.user_id} for f in friends]
     })
 
 @friends_bp.route("/add_friend", methods=["POST"])

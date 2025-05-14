@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Date
 from flask_login import UserMixin
@@ -61,6 +62,7 @@ class DailyRecord(db.Model):
 
     # New field: total calories - Migration
     total_calories = db.Column(db.Integer)
+    calories_burned = db.Column(db.Float, default=0.0)
     # One-to-many relationship: one record → many exercises
     exercises = db.relationship('DailyExercise', backref='record', lazy=True)
 
@@ -88,23 +90,23 @@ class FriendRequest(db.Model):
     __tablename__ = 'friend_request'
 
     id = db.Column(db.Integer, primary_key=True)
+
     from_user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     to_user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    status = db.Column(db.String(20), nullable=False, default='pending')  # 'pending', 'accepted', 'rejected'
+
+    status = db.Column(db.String(20), nullable=False, default='pending')
 
     from_user = db.relationship('User', foreign_keys=[from_user_id], backref='sent_friend_requests')
     to_user = db.relationship('User', foreign_keys=[to_user_id], backref='received_friend_requests')
 
 
-class SharedAnalysis(db.Model):
-    __tablename__ = 'shared_analysis'
-
+# Fittrack/models.py
+class SharedReport(db.Model):
+    __tablename__ = 'shared_report'
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    image_path = db.Column(db.String(200))  # Path to the analysis image
-    description = db.Column(db.Text)        # Optional description
-    timestamp = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+    report_type = db.Column(db.String(50), nullable=False)  # 'weight' or 'exercise'
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    sender = db.relationship('User', foreign_keys=[sender_id], backref='shared_analyses_sent')
-    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='shared_analyses_received')
+    sender = db.relationship("User", foreign_keys=[sender_id])
