@@ -1,0 +1,266 @@
+.upload-history-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.card-box {
+  flex: 1;
+  max-width: 600px;
+  min-width: 360px;
+  padding: 24px;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.vertical-divider {
+  width: 2px;
+  background-color: #bbb;
+  height: auto;
+  min-height: 500px;
+  align-self: stretch;
+  margin: 0 10px;
+}
+
+.record__group {
+  margin-bottom: 20px;
+}
+
+.record__group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.record__group input,
+.record__group select {
+  display: block;
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #333;                              
+}
+
+.exercise__entry {
+  display: flex;
+  gap: 10px; 
+  margin-bottom: 10px;
+}
+
+.exercise__entry input,
+.exercise__entry select {
+  flex: 1; 
+  min-width: 0; 
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+
+.record__group input::placeholder {
+  color: #666; 
+}
+
+
+.record__button-row {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.record__btn {
+  font-size: 0.95rem;
+  background-image: linear-gradient(to top, #f77062 0%, #fe5196 100%);
+  padding: 12px 18px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  margin-top: 2rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.35s;
+  outline: none;
+}
+
+.add-exercise-btn {
+  background-color: rgba(255, 239, 184, 0.75); 
+  color: #333;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-exercise-btn:hover {
+  background-color: rgba(255, 239, 184, 0.9);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+
+.remove-entry-btn {
+  margin-left: 10px;
+  padding: 4px 10px;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(to right, rgba(255, 183, 77, 0.7), rgba(255, 138, 101, 0.7));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.remove-entry-btn:hover {
+  background: linear-gradient(to right, rgba(255, 183, 77, 0.9), rgba(255, 138, 101, 0.9));
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+
+
+#recordDetails h3,
+#recordDetails h2 {
+  text-align: center;
+}
+
+#recordDetails table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  table-layout: fixed;
+}
+
+#recordDetails th,
+#recordDetails td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ccc;
+  word-wrap: break-word;
+}
+
+#recordDetails th {
+  background-color: #f1f3f5;
+  font-weight: 600;
+}
+
+.empty-msg {
+  text-align: center;
+  color: #ffffff;
+  background-color: #ffffff;
+  padding: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .upload-history-layout {
+    flex-direction: column;
+  }
+
+  .vertical-divider {
+    display: none;
+  }
+
+  #calendar {
+    max-width: 100%;
+  }
+}
+
+/* calender */
+#calendar {
+  border: 1px solid #ccc;;
+  border-radius: 16px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  max-width: 360px;
+  margin: 0 auto 10px auto;
+}
+
+.fc .fc-col-header-cell a {
+  color: #222 !important;           
+  text-decoration: none !important;  
+  font-weight: 600;                  
+}
+
+.fc a {
+  color: #222 !important;
+  text-decoration: none !important;
+}
+
+
+
+
+.details-table {
+  width: 100%;
+  border-collapse: separate;     /* 分开单元格 */
+  border-spacing: 0;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);  /* 卡片感阴影 */
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+/* 移除线框 */
+.details-table th,
+.details-table td {
+  border: none !important;
+  padding: 16px 20px;
+  text-align: left;
+}
+
+/* 顶部合并标题行 */
+
+/* 强制所有表头背景为米黄色，防止蓝色透出 */
+.details-table thead th {
+  background-color: rgba(255, 251, 234, 1) !important;
+  color: #222;
+  font-weight: 600;
+}
+
+.details-table thead th[colspan] {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background-color: rgba(255, 251, 234, 1) !important;
+  color: #222;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* 次行表头样式 */
+.details-table thead tr:nth-child(2) {
+  background-color: rgba(255, 251, 234, 1);
+  font-weight: 600;
+}
+
+/* 内容行 */
+.details-table tbody tr {
+  background-color: rgba(255, 251, 234, 0.4);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.details-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 1);
+}
+
+.details-table tbody td {
+  color: #333;
+}
+

@@ -1,0 +1,181 @@
+.weight-history {
+  background: #fffbea;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.weight-history h1 {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  background-image: linear-gradient(to right, #ff8177, #ff8c7f, #f99185, #cf556c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  text-align: center;
+}
+
+.card-box {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 900px;
+}
+
+
+.gradient-text {
+  background-image: linear-gradient(to right, #ff8177, #ff8c7f, #f99185, #cf556c);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.weight-summary-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.weight-summary-table th,
+.weight-summary-table td {
+  border: none !important;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.weight-summary-table thead th {
+  background-color: rgba(255, 251, 234, 1) !important;
+  color: #222;
+  font-weight: 600;
+}
+
+.weight-summary-table tbody tr {
+  background-color: rgba(255, 251, 234, 0.25) ;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.weight-summary-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.weight-summary-table td {
+  color: #333;
+}
+
+
+.chart-container {
+  width: 100%;
+  max-width: 750px;
+  height: 320px;
+  margin: 30px auto 50px auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.table-container th,
+.table-container td {
+  border: none !important;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.table-container thead th {
+  background-color: rgba(255, 251, 234, 1) !important;
+  color: #222;
+  font-weight: 600;
+}
+
+.table-container tbody tr {
+  background-color: rgba(255, 251, 234, 0.25) ;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.table-container tbody tr:not(:last-child) {
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.table-container td {
+  color: #333;
+}
+
+
+#goal-message {
+  margin-top: 30px;
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: bold;
+  color: #856404;
+}
+
+#bmi-label {
+  font-size: 1rem;
+  font-weight: bold;
+  background: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.08);
+}
+
+#bmi-arrow {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.goal-progress-bar {
+  width: 90%;
+  max-width: 600px;
+  height: 24px;
+  margin: 20px auto 40px auto;
+  background-color: rgba(255, 223, 128, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.12);
+}
+
+#goal-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #ffd166, #f4976c);
+  transition: width 0.5s ease-in-out;
+  border-radius: 12px 0 0 12px;
+}
+
+@keyframes sparkle {
+  0% { box-shadow: 0 0 10px #f4976c; }
+  50% { box-shadow: 0 0 20px #ffb347; }
+  100% { box-shadow: 0 0 10px #f4976c; }
+}
+
+#goal-progress-fill.sparkle {
+  animation: sparkle 1s ease-in-out infinite;
+}
