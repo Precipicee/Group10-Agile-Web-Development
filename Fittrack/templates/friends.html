@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Friends - FitTrack{% endblock %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/friends.css') }}">
@@ -48,9 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const username = document.getElementById("friend-username").value.trim();
     if (!username) return alert("Please enter a username");
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
     const res = await fetch("/add_friend", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken  
+      },
       body: JSON.stringify({ to_username: username })
     });
 
@@ -109,9 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Expose for onclick
   window.handleRequest = async function(requestId, action) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
     const res = await fetch("/respond_request", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" , "X-CSRFToken": csrfToken },
       body: JSON.stringify({ request_id: requestId, action })
     });
 

@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, jsonify, request
 from datetime import date, timedelta
 from Fittrack.models import User, DailyRecord, DailyExercise
 from flask_login import current_user, login_required
+from ..forms import ShareReportForm
+from ..models import FriendRequest
 
 visualise_bp = Blueprint('visualise_bp', __name__)
 
@@ -13,12 +15,25 @@ def visualise():
 @visualise_bp.route('/report/weight')
 @login_required
 def weight_report():
-    return render_template('weight.html')
+    form = ShareReportForm()
+
+    sent = FriendRequest.query.filter_by(from_user_id=current_user.user_id, status='accepted').all()
+    received = FriendRequest.query.filter_by(to_user_id=current_user.user_id, status='accepted').all()
+    friend_ids = [f.to_user_id for f in sent] + [f.from_user_id for f in received]
+    friends = User.query.filter(User.user_id.in_(friend_ids)).all()
+
+    form.receiver_id.choices = [(f.user_id, f.username) for f in friends]
+
+    return render_template("weight.html", form=form)
 
 @visualise_bp.route('/weight_data')
 @login_required
 def weight_data():
-    user = current_user
+    user_id = request.args.get("user_id")
+    if user_id:
+        user = User.query.get_or_404(user_id)
+    else:
+        user = current_user
 
     records = DailyRecord.query.filter_by(user_id=user.user_id).order_by(DailyRecord.date.asc()).all()
     return jsonify({
@@ -33,12 +48,28 @@ def weight_data():
 @visualise_bp.route("/report/exercise")
 @login_required
 def exercise_report():
-    return render_template("exercise.html")
+    form = ShareReportForm()
+
+    
+    sent = FriendRequest.query.filter_by(from_user_id=current_user.user_id, status='accepted').all()
+    received = FriendRequest.query.filter_by(to_user_id=current_user.user_id, status='accepted').all()
+    friend_ids = [f.to_user_id for f in sent] + [f.from_user_id for f in received]
+    friends = User.query.filter(User.user_id.in_(friend_ids)).all()
+
+    
+    form.receiver_id.choices = [(f.user_id, f.username) for f in friends]
+
+    
+    return render_template("exercise.html", form=form)
 
 @visualise_bp.route("/api/exercise_data")
 @login_required
 def exercise_data():
-    user = current_user
+    user_id = request.args.get("user_id")
+    if user_id:
+        user = User.query.get_or_404(user_id)
+    else:
+        user = current_user
     range_option = request.args.get("range", "week")
 
     today = date.today()
@@ -110,7 +141,11 @@ def exercise_intensity_breakdown():
 @visualise_bp.route("/api/exercise_goal_progress")
 @login_required
 def exercise_goal_progress():
-    user = current_user
+    user_id = request.args.get("user_id")
+    if user_id:
+        user = User.query.get_or_404(user_id)
+    else:
+        user = current_user
 
     if not user or not user.target_exercise_time_per_week:
         return jsonify({
@@ -141,3 +176,58 @@ def exercise_goal_progress():
         "completed": total_minutes,
         "remaining": remaining
     })
+
+@visualise_bp.route("/shared_reports")
+@login_required
+def shared_reports():
+    from ..models import SharedReport
+    report_type = request.args.get("type", "").lower()
+    
+    query = SharedReport.query.filter_by(receiver_id=current_user.user_id)
+    if report_type in ['weight', 'exercise']:
+        query = query.filter_by(report_type=report_type)
+
+    reports = query.order_by(SharedReport.timestamp.desc()).all()
+    return render_template("shared_reports.html", reports=reports, selected_type=report_type)
+
+@visualise_bp.route("/shared_view/<int:user_id>/<type>")
+@login_required
+def view_shared_report(user_id, type):
+    user = User.query.get_or_404(user_id)
+
+    
+    from ..forms import ShareReportForm
+    from ..models import FriendRequest
+
+    is_friend = FriendRequest.query.filter(
+        ((FriendRequest.from_user_id == current_user.user_id) & 
+         (FriendRequest.to_user_id == user_id) & 
+         (FriendRequest.status == 'accepted')) |
+        ((FriendRequest.from_user_id == user_id) & 
+         (FriendRequest.to_user_id == current_user.user_id) & 
+         (FriendRequest.status == 'accepted'))
+    ).first()
+
+    form = ShareReportForm() if is_friend else None
+
+    
+    if form:
+        sent = FriendRequest.query.filter_by(from_user_id=current_user.user_id, status='accepted').all()
+        received = FriendRequest.query.filter_by(to_user_id=current_user.user_id, status='accepted').all()
+        friend_ids = [f.to_user_id for f in sent] + [f.from_user_id for f in received]
+        friends = User.query.filter(User.user_id.in_(friend_ids)).all()
+        form.receiver_id.choices = [(f.user_id, f.username) for f in friends]
+
+    if type == "weight":
+        
+        user = User.query.get_or_404(user_id)
+        
+        return render_template("weight.html", shared_user=user, form=form)
+
+    elif type == "exercise":
+        user = User.query.get_or_404(user_id)
+        
+        return render_template("exercise.html", shared_user=user, form=form)
+
+    else:
+        return "Invalid report type", 400

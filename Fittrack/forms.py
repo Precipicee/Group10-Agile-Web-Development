@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, PasswordField, SubmitField, BooleanField,
-    DateField, RadioField, IntegerField, FloatField, HiddenField, ValidationError
+    DateField, RadioField, IntegerField, FloatField, HiddenField, ValidationError,SelectField
 )
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
 import re
@@ -74,3 +74,8 @@ class ChangePasswordForm(FlaskForm):
     ])
     submit = SubmitField('Change Password')
 
+
+class ShareReportForm(FlaskForm):
+    receiver_id = SelectField('Share with', coerce=int, validators=[DataRequired()])
+    
+    submit = SubmitField('Share')
