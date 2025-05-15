@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tableBody.innerHTML = `<tr><td colspan="3" class="empty-msg">No record found</td></tr>`;
       }
       
-      // 🔥 更新右侧卡路里显示
+      
       fetch(`/calorie_summary/${dateStr}`)
         .then(response => response.json())
         .then(data => {
