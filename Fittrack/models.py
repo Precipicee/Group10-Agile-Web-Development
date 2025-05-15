@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Date
 from flask_login import UserMixin
@@ -61,6 +62,7 @@ class DailyRecord(db.Model):
 
     # New field: total calories - Migration
     total_calories = db.Column(db.Integer)
+    calories_burned = db.Column(db.Float, default=0.0)
     # One-to-many relationship: one record → many exercises
     exercises = db.relationship('DailyExercise', backref='record', lazy=True)
 

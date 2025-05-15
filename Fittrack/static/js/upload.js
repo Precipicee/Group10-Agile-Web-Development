@@ -145,8 +145,26 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         tableBody.innerHTML = `<tr><td colspan="3" class="empty-msg">No record found</td></tr>`;
       }
+      
+      // 🔥 更新右侧卡路里显示
+      fetch(`/calorie_summary/${dateStr}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("mealCalories").innerText = data.total_calories.toFixed(1) + " kcal";
+          document.getElementById("burnedCalories").innerText = data.calories_burned.toFixed(1) + " kcal";
+          document.getElementById("netCalories").innerText = (data.total_calories - data.calories_burned).toFixed(1) + " kcal";
+        })
+        .catch(() => {
+          document.getElementById("mealCalories").innerText = "N/A";
+          document.getElementById("burnedCalories").innerText = "N/A";
+          document.getElementById("netCalories").innerText = "N/A";
+        });
+
+
+
     }
   });
+  
 
 window.addExerciseRow = addExerciseRow;
 window.removeThisRow = removeThisRow;

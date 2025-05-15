@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from datetime import datetime, timedelta, date
 from Fittrack.models import db, User, DailyRecord, DailyExercise
 from flask_login import current_user, login_required
+from Fittrack.utils.gpt_utils import estimate_calories_from_meal, estimate_calories_from_exercise
 
 upload_bp = Blueprint('upload_bp', __name__)
 
@@ -19,6 +20,12 @@ def add_record():
     date_str = request.form.get('date')
     form_data = request.form.to_dict(flat=True)
     session['pending_record'] = form_data
+
+        # Add exercises
+    exercises = request.form.getlist('exercise[]')
+    durations = request.form.getlist('duration[]')
+    intensities = request.form.getlist('intensity[]')
+
 
     try:
         record_date = datetime.strptime(date_str, "%Y-%m-%d").date()
@@ -49,13 +56,32 @@ def add_record():
         lunch = form_data.get('lunch')
         dinner = form_data.get('dinner')
 
+
+        meal_description = f"Breakfast: {breakfast or ''}. Lunch: {lunch or ''}. Dinner: {dinner or ''}."
+        estimated_calories = estimate_calories_from_meal(meal_description)
+
+        exercise_list = []
+        for i in range(len(exercises)):
+            if exercises[i]:
+                exercise_list.append({
+                    'type': exercises[i],
+                    'duration': durations[i],
+                    'intensity': intensities[i] or 'moderate'  # fallback
+                })
+
+
+        estimated_burned = estimate_calories_from_exercise(exercise_list)
+        print(f"[INFO] Estimated exercise calories burned: {estimated_burned}")
+
         record = DailyRecord(
             user_id=user.user_id,
             date=record_date,
             weight=weight,
             breakfast=breakfast,
             lunch=lunch,
-            dinner=dinner
+            dinner=dinner,
+            total_calories=estimated_calories,
+            calories_burned=estimated_burned
         )
         db.session.add(record)
         db.session.commit()
@@ -64,6 +90,7 @@ def add_record():
         exercises = request.form.getlist('exercise[]')
         durations = request.form.getlist('duration[]')
         intensities = request.form.getlist('intensity[]')
+
 
         for i in range(len(exercises)):
             if exercises[i]:
@@ -74,11 +101,17 @@ def add_record():
                     exercise_intensity=intensities[i] or 'unknown'
                 )
                 db.session.add(ex)
-
         db.session.commit()
-        flash("Record saved successfully!", "success")
-        session.pop('pending_record', None)
-        return redirect(url_for('profile_bp.services'))
+
+        flash(f"Record saved successfully! Net calories: {(estimated_calories-estimated_burned):.0f} kcal", "success")
+        session['pending_record'] = {
+            'breakfast': breakfast,
+            'lunch': lunch,
+            'dinner': dinner,
+            'total_calories': estimated_calories,
+            'calories_burned': estimated_burned
+        }
+        return redirect(url_for('upload_bp.upload'))
 
     except Exception as e:
         db.session.rollback()
@@ -132,6 +165,29 @@ def update_record():
                     ))
                 except Exception as e:
                     print(f"[WARN] Failed to parse: {entry}", e)
+        exercise_list = []
+        if exercise_combined:
+            for entry in exercise_combined.split(";"):
+                if not entry.strip():
+                    continue
+                try:
+                    name_part, rest = entry.split("(", 1)
+                    name = name_part.strip()
+                    rest = rest.replace(")", "").strip()
+                    duration_str, intensity = [r.strip() for r in rest.split(",")]
+                    duration = int(duration_str.replace("min", "").strip())
+                    exercise_list.append({
+                        'type': name,
+                        'duration': duration,
+                        'intensity': intensity
+                    })
+                except Exception as e:
+                    print(f"[WARN] Failed to parse for GPT estimation: {entry}", e)
+
+        if exercise_list:
+            record.calories_burned = estimate_calories_from_exercise(exercise_list)
+            print(f"[INFO] Updated calories_burned = {record.calories_burned}")
+
 
         # Update BMI if same as register date
         try:
@@ -265,3 +321,19 @@ def check_existing_record():
 
     existing = DailyRecord.query.filter_by(user_id=current_user.user_id, date=record_date).first()
     return jsonify({"exists": bool(existing)})
+
+
+@upload_bp.route('/calorie_summary/<date>')
+@login_required
+def calorie_summary(date):
+    record = DailyRecord.query.filter_by(user_id=current_user.user_id, date=date).first()
+    if record:
+        return jsonify({
+            'total_calories': record.total_calories or 0,
+            'calories_burned': record.calories_burned or 0
+        })
+    else:
+        return jsonify({
+            'total_calories': 0,
+            'calories_burned': 0
+        })
