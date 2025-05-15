@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Diet Report - FitTrack{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diet.css') }}">
+
+<div class="upload-history-layout">
+<h1>Diet Analysis</h1>
+  <!-- Overview Card -->
+  <div class="card-box">
+    <h2 class="text-center mb-4">Overview</h2>
+
+<p class="disclaimer-text text-center">
+  <em>Recommended calorie intake is calculated using your age, height, gender, current weight, target weight & weekly exercise plan. Use as a guide only.</em>
+</p>
+
+    <div class="row row-cols-1 row-cols-lg-2 g-3 mb-3">
+      <div class="col">
+        <div class="card text-center border-primary bg-light-subtle shadow-sm h-100">
+          <div class="card-body">
+            <h4 class="fw-bold text-dark mb-0">
+              Today's Calories:<br><span class="gradient-text" id="todays-calories">--</span>
+            </h4>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card text-center border-success bg-light-subtle shadow-sm h-100">
+          <div class="card-body">
+            <h4 class="fw-bold text-dark mb-0">
+              Recommended Intake:<br><span class="gradient-text" id="recommended-calories">--</span>
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="goal-status-banner" id="goal-message">
+  <span class="goal-item">Weight Goal: <span class="gradient-text" id="goal-type">--</span></span>
+  <span class="goal-divider">|</span>
+  <span class="goal-item">Activity Level: <span class="gradient-text" id="activity-level">--</span></span>
+</div>
+
+    <!-- User Stats Summary Table -->
+    <div class="diet-summary mt-5">
+      <h4>User Profile Summary</h4>
+      <table class="weight-summary-table">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>Height (cm)</th>
+            <th>Weight (kg)</th>
+            <th>Gender</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="profile-age">--</td>
+            <td id="profile-height">--</td>
+            <td id="profile-weight">--</td>
+            <td id="profile-gender">--</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Calorie Intake Chart -->
+  <div class="card-box">
+    <h2 class="text-center">Calorie Intake Over Time</h2>
+    <div class="chart-container">
+      <canvas id="calorie-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Diet Log -->
+  <div class="card-box">
+    <h2 class="text-center">Diet Log</h2>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Food Item</th>
+            <th>Calories</th>
+          </tr>
+        </thead>
+        <tbody id="diet-log-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/diet.js') }}"></script>
+{% endblock %}
