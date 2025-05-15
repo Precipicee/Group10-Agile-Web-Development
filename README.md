@@ -63,6 +63,8 @@ WTF_CSRF_SECRET_KEY=another_secret_key_456
 
 In the terminal, before run the command 'flask run', input 'export $(cat .env |xargs)'
 
+---
+
 ## Tutorial of the Website
 
 After getting the server to run and reaching the homepage on `http://127.0.0.1:5000`, you will be greeted with the `Home` page.
