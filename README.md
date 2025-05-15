@@ -53,6 +53,16 @@ WTF_CSRF_SECRET_KEY=csrf-secret-key
 
 ---
 
+## Create the env to run the openai feature
+Create a .env file in the root directory
+
+Add the following lines:
+OPENAI_API_KEY=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
+SECRET_KEY=super_secret_key_123
+WTF_CSRF_SECRET_KEY=another_secret_key_456
+
+In the terminal, before run the command 'flask run', input 'export $(cat .env |xargs)'
+
 ## Tutorial of the Website
 
 After getting the server to run and reaching the homepage on `http://127.0.0.1:5000`, you will be greeted with the `Home` page.
