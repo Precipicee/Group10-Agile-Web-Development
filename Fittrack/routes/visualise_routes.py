@@ -184,7 +184,7 @@ def shared_reports():
     report_type = request.args.get("type", "").lower()
     
     query = SharedReport.query.filter_by(receiver_id=current_user.user_id)
-    if report_type in ['weight', 'exercise']:
+    if report_type in ['weight', 'exercise', 'diet']:
         query = query.filter_by(report_type=report_type)
 
     reports = query.order_by(SharedReport.timestamp.desc()).all()
@@ -231,6 +231,7 @@ def view_shared_report(user_id, type):
 
     else:
         return "Invalid report type", 400
+
 
 @visualise_bp.route("/report/diet")
 @login_required

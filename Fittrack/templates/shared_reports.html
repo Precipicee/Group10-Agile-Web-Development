@@ -1,37 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>📬 Shared Reports</h1>
-
-
-  <form method="get" action="{{ url_for('visualise_bp.shared_reports') }}">
-    <label for="filter">Filter by report type:</label>
-    <select name="type" id="filter" onchange="this.form.submit()">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/share.css') }}">
+<div class="share-layout">
+  <h1 class="profile-title">📬 Reports Shared With You</h1>
+  <!-- Filter -->
+  <form method="get" action="{{ url_for('visualise_bp.shared_reports') }}" class="text-center mb-4">
+    <label for="filter" class="fw-medium">Filter by report type:</label>
+    <select name="type" id="filter" onchange="this.form.submit()" class="ms-2 px-2 py-1 rounded">
       <option value="">All</option>
       <option value="weight" {% if selected_type == 'weight' %}selected{% endif %}>Weight</option>
       <option value="exercise" {% if selected_type == 'exercise' %}selected{% endif %}>Exercise</option>
+      <option value="diet" {% if selected_type == 'diet' %}selected{% endif %}>Diet</option>
     </select>
   </form>
 
+  <!-- shared report -->
   {% if reports %}
-    <ul class="list-group mt-3">
+    <div class="d-flex flex-column align-items-center gap-4">
       {% for report in reports %}
-        <li class="list-group-item">
-          <strong>{{ report.report_type.capitalize() }} report</strong> from <em>{{ report.sender.username }}</em>
-          <br>
-          Shared on: {{ report.timestamp.strftime('%Y-%m-%d %H:%M') }}
-          <br>
-          <p>DEBUG sender_id = {{ report.sender_id }} / report_type = {{ report.report_type }}</p>
-
-          <a href="{{ url_for('visualise_bp.view_shared_report', user_id=report.sender_id or 1, type=report.report_type|default('weight')) }}">
-              👉 View {{ report.report_type|default('weight') }} report from {{ report.sender.username }}
-          </a>
-
-          
-          <p>Debug type: {{ report.report_type }}</p>
-        </li>
+        <a href="{{ url_for('visualise_bp.view_shared_report', user_id=report.sender_id or 1, type=report.report_type|default('weight')) }}"
+          class="shared-report-card text-decoration-none text-dark">
+          <div class="report-card-content">
+            <div class="sender-name">{{ report.sender.username }}</div>
+            <div class="report-info text-center">
+              <div class="report-type-title">{{ report.report_type.capitalize() }} report</div>
+              <div class="text-muted small">Shared on: {{ report.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+              <div class="text-primary mt-1">👉 View {{ report.report_type }} report from {{ report.sender.username }}</div>
+            </div>
+          </div>
+        </a>
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
-    <p>No reports shared with you.</p>
+    <p class="text-center mt-4">No reports shared with you.</p>
   {% endif %}
+  <hr />
+    <!-- Description + Report-select Button-->
+  <div class="card-box mb-4" style="margin: auto;">
+    <h4 class="text-center fw-bold mb-3">Want to share your report?</h4>
+    <p class="text-center mb-4">Go to the bottom of each report page and click the “Share” button.</p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{{ url_for('visualise_bp.weight_report') }}" class="btn-gradient text-decoration-none">Weight Report</a>
+      <a href="{{ url_for('visualise_bp.exercise_report') }}" class="btn-gradient text-decoration-none">Exercise Report</a>
+      <a href="{{ url_for('visualise_bp.diet_report') }}" class="btn-gradient text-decoration-none">Diet Report</a>
+    </div>
+  </div>
+
+</div>
+
 {% endblock %}
+

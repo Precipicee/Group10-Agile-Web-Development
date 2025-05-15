@@ -1,27 +1,55 @@
-# [TODO: ADD IMAGES FOR TUTORIAL]
-
 # Group10-Agile-Web-Development
 Group 10's Agile Web Development Project: FitTrack
 
-## Rundown of our Project
-
-Our project aimed to create a simple, easy-to-use fitness tracker web application. 
-
-It holds data for weight and exercise habits, and provides graphical output based on a person's progression.
-
-The app is intended to be used once per day, and as such a user can only enter data for a given day once.
-
-Once a user uploads data, we provide insights and analysis on their current capacities.
+FitTrack is a simple, user-friendly fitness tracker web application developed for the Agile Web Development unit. The app allows users to track their daily weight and exercise habits and visualize their progress over time.
 
 ---
 
-## Running the Application Server
+## Group Members
 
-To get the server to run, simply run the `run.sh` file.
+| UWA ID       | Name             | GitHub Username   |
+|--------------|------------------|-------------------|
+| 24386354     | Mika Li          | MMs-gitH          |
+| 23813728     | Dante McGee      | Precipicee        |
+| 22487434     | Bianca Sumich    | biancasumich      |
+| 24648002     | Zachary Wang     | ZacAster          |
 
-If there is a permission denied output, make it executable using `chmod +x run.sh`.
+---
 
-By default, it will run the server on `localhost:5000`.
+## How to run the Application
+1. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+2. Create a `.env` file in the root directory:
+   ```bash
+   nano .env
+   ```
+
+   Add the following lines:
+   ```env
+   SECRET_KEY=group10
+   WTF_CSRF_SECRET_KEY=csrf-secret-key
+   ```
+
+3. Make the run script executable and start the app:
+   ```bash
+   chmod +x run.sh
+   ./run.sh
+   ```
+
+---
+
+## Environment Configuration (`.env`)
+
+The application uses a `.env` file to store sensitive configuration variables. At a minimum, the `.env` file must include:
+
+```env
+SECRET_KEY=group10
+WTF_CSRF_SECRET_KEY=csrf-secret-key
+```
 
 ---
 
@@ -48,6 +76,4 @@ Once creating an account using the `Sign Up` page, you must fill in some prelimi
 Once this information is filled out, you will be taken to the `Data Page`, which allows you to choose if you want to add data (the `Upload Data` portion of the project), or view reports (the `Visualise Data` section). New tabs in the navigation bar will now be included: `Entry` and `Reports`.
 
 [image of navbar]
-
-... talk about entry and reports ...
 

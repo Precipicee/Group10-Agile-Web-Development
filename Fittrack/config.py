@@ -1,8 +1,13 @@
+from dotenv import load_dotenv
 import os
+from pathlib import Path
+
+dotenv_path = Path(__file__).resolve().parents[1] / ".env"
+load_dotenv(dotenv_path)
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "group10")  
-    WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY", "another-strong-secret")
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    WTF_CSRF_SECRET_KEY = os.getenv("WTF_CSRF_SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///users.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_COOKIE_SAMESITE = "Lax"

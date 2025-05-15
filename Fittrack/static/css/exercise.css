@@ -144,3 +144,22 @@ h1 {
   color: white;
   font-weight: bold;
 }
+
+.btn-share {
+  font-size: 0.95rem;
+  background-image: linear-gradient(to top, #f77062 0%, #fe5196 100%);
+  padding: 12px 18px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  margin-top: 2rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.35s;
+  outline: none;
+}
+
+.btn-share:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
