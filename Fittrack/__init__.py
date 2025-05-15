@@ -40,6 +40,8 @@ def create_app():
                 if request.endpoint not in allowed_routes and not request.path.startswith("/static"):
                     return redirect(url_for('profile_bp.basicinfo'))
 
+    print("CSRF Protection is enabled:", app.config.get("WTF_CSRF_ENABLED", True))
+
     return app
 
 @login_manager.user_loader

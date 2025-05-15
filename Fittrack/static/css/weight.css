@@ -1,3 +1,22 @@
+.upload-history-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: #fffbea;
+  text-align: center; 
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  background-image: linear-gradient(to right, #ff8177, #ff8c7f, #f99185, #cf556c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  text-align: center;
+}
+
 .weight-history {
   background: #fffbea;
   display: flex;

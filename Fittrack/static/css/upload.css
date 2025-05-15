@@ -146,7 +146,7 @@
 
 #recordDetails th,
 #recordDetails td {
-  text-align: left;
+  text-align: center;
   padding: 10px;
   border: 1px solid #ccc;
   word-wrap: break-word;
@@ -207,18 +207,17 @@
 
 .details-table {
   width: 100%;
-  border-collapse: separate;     /* 分开单元格 */
+  border-collapse: separate;   
   border-spacing: 0;
   border: none;
   border-radius: 16px;
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);  /* 卡片感阴影 */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06); 
   font-size: 1rem;
   margin-top: 1rem;
 }
 
-/* 移除线框 */
 .details-table th,
 .details-table td {
   border: none !important;
@@ -226,9 +225,6 @@
   text-align: left;
 }
 
-/* 顶部合并标题行 */
-
-/* 强制所有表头背景为米黄色，防止蓝色透出 */
 .details-table thead th {
   background-color: rgba(255, 251, 234, 1) !important;
   color: #222;
@@ -244,13 +240,11 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-/* 次行表头样式 */
 .details-table thead tr:nth-child(2) {
   background-color: rgba(255, 251, 234, 1);
   font-weight: 600;
 }
 
-/* 内容行 */
 .details-table tbody tr {
   background-color: rgba(255, 251, 234, 0.4);
   transition: background-color 0.2s ease-in-out;
@@ -263,4 +257,5 @@
 .details-table tbody td {
   color: #333;
 }
+
 
