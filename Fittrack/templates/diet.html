@@ -5,90 +5,145 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/diet.css') }}">
 
 <div class="upload-history-layout">
-<h1>Diet Analysis</h1>
-  <!-- Overview Card -->
+  <h1>Diet Report</h1>
+  <!-- Card 1: Page Introduction -->
   <div class="card-box">
-    <h2 class="text-center mb-4">Overview</h2>
+    <h2 class="text-center mb-3">🍽️ Diet Analysis Overview</h2>
+    <p class="text-center">
+      This page analyzes your daily calorie intake to assess the healthiness of your diet.
+      Based on your personal data and fitness goals, it recommends a suitable calorie intake
+      range and provides insights into how your eating habits align with your weight management plan.
+    </p>
+    <p class="text-center text-muted">
+      <em>Healthy weight loss isn't about starving — maintaining sufficient intake preserves metabolism. Aim to create a calorie deficit through exercise rather than severe restriction.</em>
+    </p>
+  </div>
 
-<p class="disclaimer-text text-center">
-  <em>Recommended calorie intake is calculated using your age, height, gender, current weight, target weight & weekly exercise plan. Use as a guide only.</em>
-</p>
-
+  <!-- Card 2: Daily Calorie Comparison -->
+  <div class="card-box">
+    <h2 class="text-center mb-3">📊 Daily Calorie Summary</h2>
     <div class="row row-cols-1 row-cols-lg-2 g-3 mb-3">
+      
+      <!-- Left Card: Date + Intake -->
       <div class="col">
-        <div class="card text-center border-primary bg-light-subtle shadow-sm h-100">
+        <div class="card text-center border-primary shadow-sm h-100">
           <div class="card-body">
-            <h4 class="fw-bold text-dark mb-0">
-              Today's Calories:<br><span class="gradient-text" id="todays-calories">--</span>
-            </h4>
+            <h5 class="fw-bold text-dark">Selected Date:</h5>
+            <input type="date" id="calorie-date" class="form-control text-center mb-3" />
+            
+            <h5 class="fw-bold text-dark">Calories Consumed</h5>
+            <span class="gradient-text fs-4" id="calorie-intake">-- kcal</span>
           </div>
         </div>
       </div>
+
+      <!-- Right Card: Activity Level + Recommendation -->
       <div class="col">
-        <div class="card text-center border-success bg-light-subtle shadow-sm h-100">
+        <div class="card text-center border-info shadow-sm h-100">
           <div class="card-body">
-            <h4 class="fw-bold text-dark mb-0">
-              Recommended Intake:<br><span class="gradient-text" id="recommended-calories">--</span>
-            </h4>
+            <h5 class="fw-bold text-dark mb-2">Activity Level</h5>
+
+            {% if shared_user %}
+              <p class="text-muted">
+                {{ shared_user.activity_level | capitalize }} - 
+                {% if shared_user.activity_level == 'low' %}
+                  Little or no exercise
+                {% elif shared_user.activity_level == 'moderate' %}
+                  3-5 days/week activity
+                {% elif shared_user.activity_level == 'high' %}
+                  Daily intense activity
+                {% else %}
+                  Unknown
+                {% endif %}
+              </p>
+            {% else %}
+              <select id="activity-level-select" class="form-select">
+                <option value="low">Low - Little or no exercise</option>
+                <option value="moderate" selected>Moderate - 3-5 days/week activity</option>
+                <option value="high">High - Daily intense activity</option>
+              </select>
+            {% endif %}
+
+            <h5 class="fw-bold text-dark">Recommended Intake</h5>
+            <span class="gradient-text fs-4" id="calorie-recommended">
+              {% if shared_user %}
+                {{ shared_user.recommended_calories }} kcal
+              {% else %}
+                -- kcal
+              {% endif %}
+            </span>
           </div>
         </div>
       </div>
+
     </div>
 
-<div class="goal-status-banner" id="goal-message">
-  <span class="goal-item">Weight Goal: <span class="gradient-text" id="goal-type">--</span></span>
-  <span class="goal-divider">|</span>
-  <span class="goal-item">Activity Level: <span class="gradient-text" id="activity-level">--</span></span>
-</div>
+    <!-- Difference Banner -->
+    <div class="goal-status-banner mt-2" id="intake-diff-box">
+      <span class="goal-item">Difference: <span class="gradient-text" id="calorie-diff">--</span></span>
+      <p class="mt-2 small">
+        <em>Advice will be shown here based on the difference between intake and recommended calories.</em>
+      </p>
+    </div>
+  </div>
 
-    <!-- User Stats Summary Table -->
-    <div class="diet-summary mt-5">
-      <h4>User Profile Summary</h4>
-      <table class="weight-summary-table">
+  <!-- Card 3: Calorie Intake Over Time Card -->
+  <div class="card-box">
+    <h2 class="text-center">📊 Calorie Intake Over Time</h2>
+    <div class="chart-container">
+      <canvas id="calorie-intake-chart"></canvas>
+    </div>
+    <div class="table-container mt-3">
+      <table class="table">
         <thead>
           <tr>
-            <th>Age</th>
-            <th>Height (cm)</th>
-            <th>Weight (kg)</th>
-            <th>Gender</th>
+            <th>Date</th>
+            <th>Calories Consumed</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="calorie-intake-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 4: Energy Gap Chart -->
+  <div class="card-box">
+    <h2 class="text-center">⚖️ Energy Gap Over Time</h2>
+    <div class="chart-container">
+      <canvas id="energy-gap-chart"></canvas>
+    </div>
+    <div class="table-container mt-4">
+      <table class="table table-bordered text-center">
+        <thead>
           <tr>
-            <td id="profile-age">--</td>
-            <td id="profile-height">--</td>
-            <td id="profile-weight">--</td>
-            <td id="profile-gender">--</td>
+            <th>Date</th>
+            <th>Energy Gap (kcal)</th>
           </tr>
+        </thead>
+        <tbody id="energy-gap-table-body">
+          <!-- Filled by JS -->
         </tbody>
       </table>
     </div>
   </div>
+  {% if not shared_user %}
+    <div class="card-box">
+      <h2 class="text-center">Share Diet Report</h2>
 
-  <!-- Calorie Intake Chart -->
-  <div class="card-box">
-    <h2 class="text-center">Calorie Intake Over Time</h2>
-    <div class="chart-container">
-      <canvas id="calorie-chart"></canvas>
+      <form method="POST" action="{{ url_for('share_bp.share_report', report_type='diet') }}" class="px-3">
+        {{ form.hidden_tag() }}
+        <div class="form-group mb-3">
+          <label for="receiver_id" class="form-label fw-medium">Select a friend to share with:</label>
+          {{ form.receiver_id(class="form-control") }}
+        </div>
+        <div class="text-center">
+          <button type="submit" class="btn-share">Share</button>
+        </div>
+      </form>
     </div>
-  </div>
+  {% endif %}
 
-  <!-- Diet Log -->
-  <div class="card-box">
-    <h2 class="text-center">Diet Log</h2>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Food Item</th>
-            <th>Calories</th>
-          </tr>
-        </thead>
-        <tbody id="diet-log-body"></tbody>
-      </table>
-    </div>
-  </div>
+
 </div>
 {% endblock %}
 

@@ -30,8 +30,9 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
 
    Add the following lines:
    ```env
-   SECRET_KEY=group10
-   WTF_CSRF_SECRET_KEY=csrf-secret-key
+   SECRET_KEY=
+   WTF_CSRF_SECRET_KEY=
+   OPENAI_API_KEY=
    ```
 
 3. Make the run script executable and start the app:
@@ -39,30 +40,7 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
    chmod +x run.sh
    ./run.sh
    ```
-
----
-
-## Environment Configuration (`.env`)
-
-The application uses a `.env` file to store sensitive configuration variables. At a minimum, the `.env` file must include:
-
-```env
-SECRET_KEY=group10
-WTF_CSRF_SECRET_KEY=csrf-secret-key
-```
-
----
-
-## Create the env to run the openai feature
-Create a .env file in the root directory
-
-Add the following lines:
-OPENAI_API_KEY=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
-SECRET_KEY=super_secret_key_123
-WTF_CSRF_SECRET_KEY=another_secret_key_456
-
-In the terminal, before run the command 'flask run', input 'export $(cat .env |xargs)'
-
+Note: Please register your own API key via the OpenAI platform.
 ---
 
 ## Tutorial of the Website
