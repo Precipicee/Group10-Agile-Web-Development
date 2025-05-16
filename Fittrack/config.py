@@ -18,3 +18,7 @@ class TestingConfig(Config):
 
     SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"
 
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    WTF_CSRF_ENABLED = False 

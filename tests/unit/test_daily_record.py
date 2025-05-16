@@ -9,16 +9,14 @@ from Fittrack.models import User, DailyRecord
 from werkzeug.security import generate_password_hash
 import logging
 logging.basicConfig(level=logging.WARNING)
+from Fittrack.config import TestConfig
 
 
 
 
 class DailyRecordTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        self.app.config['WTF_CSRF_ENABLED'] = False
+        self.app = create_app(TestConfig) 
         self.client = self.app.test_client()
 
         with self.app.app_context():
