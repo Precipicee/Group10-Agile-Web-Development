@@ -66,6 +66,10 @@ source venv/bin/activate
 3. Run all tests:
 
 ```bash
+python3 -m unittest discover -s tests/unit
+```
+
+```bash
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
