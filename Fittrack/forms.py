@@ -3,7 +3,7 @@ from wtforms import (
     StringField, PasswordField, SubmitField, BooleanField,
     DateField, RadioField, IntegerField, FloatField, HiddenField, ValidationError,SelectField
 )
-from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, NumberRange
 import re
 
 def validate_strong_password(form, field):
@@ -42,23 +42,24 @@ class BasicInfoForm(FlaskForm):
     avatar = HiddenField('Avatar', validators=[DataRequired()])
     birthday = DateField('Birthday', validators=[DataRequired()], format='%Y-%m-%d')
     gender = RadioField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], validators=[DataRequired()])
-    height = IntegerField('Height (cm)', validators=[DataRequired()])
-    current_weight = FloatField('Current Weight (kg)', validators=[DataRequired()])
-    target_weight = FloatField('Target Weight (kg)', validators=[DataRequired()])
-    target_weight_time_days = IntegerField('Target Time (days)', validators=[Optional()])
-    target_exercise_time_per_week = IntegerField('Exercise per Week (min)', validators=[Optional()])
-    target_exercise_timeframe_days = IntegerField('Exercise Plan Duration (days)', validators=[Optional()])
+    height = IntegerField('Height (cm)', validators=[DataRequired(), NumberRange(min=1)])
+    current_weight = FloatField('Current Weight (kg)', validators=[DataRequired(), NumberRange(min=0.01, message="must be a positive number.")])
+    target_weight = FloatField('Target Weight (kg)', validators=[DataRequired(), NumberRange(min=0.01, message="must be a positive number.")])
+    target_weight_time_days = IntegerField('Target Time (days)', validators=[Optional(), NumberRange(min=1)])
+    target_exercise_time_per_week = IntegerField('Exercise per Week (min)', validators=[Optional(), NumberRange(min=1)])
+    target_exercise_timeframe_days = IntegerField('Exercise Plan Duration (days)', validators=[Optional(), NumberRange(min=1)])
     submit = SubmitField('Submit Profile')
+
 
 class EditProfileForm(FlaskForm):
     birthday = DateField('Birthday', validators=[DataRequired()], format='%Y-%m-%d')
     gender = RadioField('Gender', choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-    height = IntegerField('Height', validators=[DataRequired()])
-    current_weight = FloatField('Current Weight', validators=[DataRequired()])
-    target_weight = FloatField('Target Weight', validators=[DataRequired()])
-    target_weight_time_days = IntegerField('Target Days', validators=[Optional()])
-    target_exercise_time_per_week = IntegerField('Exercise per Week', validators=[Optional()])
-    target_exercise_timeframe_days = IntegerField('Exercise Plan Duration', validators=[Optional()])
+    height = IntegerField('Height', validators=[DataRequired(), NumberRange(min=1)])
+    current_weight = FloatField('Current Weight', validators=[DataRequired(), NumberRange(min=0.01, message="must be a positive number.")])
+    target_weight = FloatField('Target Weight', validators=[DataRequired(), NumberRange(min=0.01, message="must be a positive number.")])
+    target_weight_time_days = IntegerField('Target Days', validators=[Optional(), NumberRange(min=1)])
+    target_exercise_time_per_week = IntegerField('Exercise per Week', validators=[Optional(), NumberRange(min=1)])
+    target_exercise_timeframe_days = IntegerField('Exercise Plan Duration', validators=[Optional(), NumberRange(min=1)])
     submit = SubmitField('Save Changes')
 
 
