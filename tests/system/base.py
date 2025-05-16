@@ -35,7 +35,7 @@ class BaseSystemTestCase(unittest.TestCase):
         time.sleep(1)  # Give the server a moment to start
 
         options = webdriver.ChromeOptions()
-        #options.add_argument('--headless=new')
+        options.add_argument('--headless=new')
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-features=PasswordManagerOnboarding,PasswordCheck")
         options.add_experimental_option("prefs", {
