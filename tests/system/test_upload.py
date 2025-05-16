@@ -38,6 +38,9 @@ class UploadTest(BaseSystemTestCase):
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
+        WebDriverWait(self.driver, 5).until(
+            expected_conditions.presence_of_element_located((By.LINK_TEXT, "Log Out"))
+        )
 
         # Upload the first record
         self.upload_record()
@@ -61,6 +64,9 @@ class UploadTest(BaseSystemTestCase):
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
+        WebDriverWait(self.driver, 5).until(
+            expected_conditions.presence_of_element_located((By.LINK_TEXT, "Log Out"))
+        )
 
         # Upload the first record
         self.upload_record()
