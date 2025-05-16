@@ -101,16 +101,17 @@ class EditProfileTest(BaseSystemTestCase):
             expected_conditions.element_to_be_clickable((By.ID, "edit-profile-btn"))
         )
         edit_btn = self.driver.find_element(By.ID, "edit-profile-btn")
-        edit_btn.click()
+        self.driver.execute_script("arguments[0].click();", edit_btn)
 
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "#profile-weight-reg input"))
         )
+
         weight_input = self.driver.find_element(By.CSS_SELECTOR, "#profile-weight-reg input")
         weight_input.clear()
         weight_input.send_keys("-10")  # Negative value
 
-        edit_btn.click()
+        self.driver.execute_script("arguments[0].click();", edit_btn)
 
         # Wait for the input to disappear and display mode to return
         WebDriverWait(self.driver, 10).until_not(
