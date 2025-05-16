@@ -18,6 +18,9 @@ logging.getLogger('werkzeug').setLevel(logging.ERROR)
 warnings.filterwarnings("ignore", category=ResourceWarning)
 
 class BaseSystemTestCase(unittest.TestCase):
+
+    BASE_URL = "http://localhost:5000"
+
     def setUp(self):
         testApp = create_app(TestingConfig)
         self.app_ctx = testApp.app_context()

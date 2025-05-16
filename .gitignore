@@ -10,7 +10,7 @@ __pycache__/
 
 .env
 
-instance/:test.db
+instance/test.db
 
 *.deb
 
