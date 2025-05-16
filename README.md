@@ -51,7 +51,9 @@ To run all tests:
 2. Activate the virtual environment:
 
 ```bash
+
 source venv/bin/activate
+```
 
 ```
 

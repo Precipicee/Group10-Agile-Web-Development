@@ -15,4 +15,6 @@ class Config:
     SESSION_COOKIE_SECURE = False
 
 class TestingConfig(Config):
+
     SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"
+

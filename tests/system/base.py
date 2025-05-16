@@ -38,12 +38,13 @@ class BaseSystemTestCase(unittest.TestCase):
             "credentials_enable_service": False,
             "profile.password_manager_enabled": False
         })
-
         self.driver = webdriver.Chrome(options=options)
+
         super().setUp()
     
     def signup_user(self, username, password, email="test@example.com"):
         self.driver.get(f"{self.BASE_URL}/signup")
+
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.ID, "username"))
         )
