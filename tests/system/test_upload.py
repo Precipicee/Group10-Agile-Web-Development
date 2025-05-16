@@ -31,13 +31,16 @@ class UploadTest(BaseSystemTestCase):
 
     def test_upload_record(self):
         # Sign up and log in
-        self.signup_user("uploaduser", "Uploadpass1", email="uploaduser@example.com")
+        self.signup_user("uploaduser", "Uplbhsfudifradp@55!", email="uploaduser@example.com")
         self.driver.get(f"{self.BASE_URL}/signin")
         self.driver.find_element(By.ID, "username").send_keys("uploaduser")
-        self.driver.find_element(By.ID, "password").send_keys("Uploadpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Uplbhsfudifradp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
+        WebDriverWait(self.driver, 5).until(
+            expected_conditions.presence_of_element_located((By.LINK_TEXT, "Log Out"))
+        )
 
         # Upload the first record
         self.upload_record()
@@ -54,13 +57,16 @@ class UploadTest(BaseSystemTestCase):
 
     def test_upload_duplicate_record(self):
         # Sign up and log in
-        self.signup_user("uploaduser2", "Uploadpass1", email="uploaduser2@example.com")
+        self.signup_user("uploaduser2", "Uplbhsfudifradp@55!", email="uploaduser2@example.com")
         self.driver.get(f"{self.BASE_URL}/signin")
         self.driver.find_element(By.ID, "username").send_keys("uploaduser2")
-        self.driver.find_element(By.ID, "password").send_keys("Uploadpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Uplbhsfudifradp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
+        WebDriverWait(self.driver, 5).until(
+            expected_conditions.presence_of_element_located((By.LINK_TEXT, "Log Out"))
+        )
 
         # Upload the first record
         self.upload_record()

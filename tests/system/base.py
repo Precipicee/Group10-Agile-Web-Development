@@ -32,9 +32,10 @@ class BaseSystemTestCase(unittest.TestCase):
 
         self.server_thread = multiprocessing.Process(target=run_app)
         self.server_thread.start()
+        time.sleep(1)  # Give the server a moment to start
 
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless=new')
+        #options.add_argument('--headless=new')
         options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-features=PasswordManagerOnboarding,PasswordCheck")
         options.add_experimental_option("prefs", {
@@ -67,6 +68,7 @@ class BaseSystemTestCase(unittest.TestCase):
         )
         self.driver.execute_script("arguments[0].click();", logout_link)
 
+    
     def complete_profile(self):
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.ID, "height"))
