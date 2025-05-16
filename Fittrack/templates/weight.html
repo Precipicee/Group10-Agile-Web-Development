@@ -78,6 +78,16 @@
   <!-- Weight Chart -->
   <div class="card-box">
     <h2 class="text-center">Weight Over Time</h2>
+
+    <!-- Chart Toggle Controls -->
+    <div class="d-flex justify-content-center mb-3">
+      <div class="btn-group" role="group" aria-label="Chart Range">
+        <button type="button" class="btn btn-outline-primary chart-toggle-btn active" id="btn-weight-week" data-range="week">Week</button>
+        <button type="button" class="btn btn-outline-primary chart-toggle-btn" id="btn-weight-month" data-range="month">Month</button>
+        <button type="button" class="btn btn-outline-primary chart-toggle-btn" id="btn-weight-year" data-range="year">Year</button>
+      </div>
+    </div>
+
     <div class="chart-container">
       <canvas id="weight-chart"></canvas>
     </div>
