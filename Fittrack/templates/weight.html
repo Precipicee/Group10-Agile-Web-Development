@@ -80,15 +80,15 @@
   <div class="card-box">
     <h2 class="text-center">Weight Over Time</h2>
 
-    <!-- Chart Toggle Controls -->
+  <!-- Chart Toggle Controls -->
     <div class="d-flex justify-content-center mb-3">
-      <div class="btn-group" role="group" aria-label="Chart Range">
-        <button type="button" class="btn btn-outline-primary chart-toggle-btn active" id="btn-weight-week" data-range="week">Week</button>
-        <button type="button" class="btn btn-outline-primary chart-toggle-btn" id="btn-weight-month" data-range="month">Month</button>
-        <button type="button" class="btn btn-outline-primary chart-toggle-btn" id="btn-weight-year" data-range="year">Year</button>
+      <div class="text-center mb-3">
+        <button id="btn-weight-week" class="toggle-btn active" data-range="week">Week</button>
+        <button id="btn-weight-month" class="toggle-btn" data-range="month">Month</button>
+        <button id="btn-weight-year" class="toggle-btn" data-range="year">Year</button>
       </div>
     </div>
-
+    
     <div class="chart-container">
       <canvas id="weight-chart"></canvas>
     </div>
@@ -125,7 +125,15 @@
         </div>
       </form>
     </div>
-  {% endif %}  
+  {% endif %}
+
+  <div class="card-box mt-4 text-center">
+  <h2 class="report-heading">Navigate to Other Reports</h2>
+    <div class="report-links">
+      <a href="{{ url_for('visualise_bp.exercise_report') }}" class="report-link-button">Exercise Report</a>
+      <a href="{{ url_for('diet_bp.diet_report') }}" class="report-link-button">Diet Report</a>
+    </div>
+  </div>  
   
 </div>
 {% endblock %}
