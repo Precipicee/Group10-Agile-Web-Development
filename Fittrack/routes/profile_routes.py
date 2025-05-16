@@ -168,7 +168,7 @@ def change_password():
         current = form.current_password.data
         new = form.new_password.data
 
-        if user.check_password(current):
+        if not user.check_password(current):
             flash("Incorrect current password.", "danger")
             return render_template('change_password.html', form=form)
 
