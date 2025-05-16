@@ -16,9 +16,9 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
 
 ---
 
-## Disclaimer about AI Usage
+## Disclaimer about GitHub Copilot Usage
 
-AI (ChatGPT, GitHub Copilot) were used throughout this project to assist in development.
+GitHub Copilot were used throughout this project to assist in development.
 
 ---
 
