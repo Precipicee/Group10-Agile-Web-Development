@@ -14,19 +14,17 @@ login_manager = LoginManager()
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-
     db.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth_bp.signin'
-
-    Migrate(app, db) # Migration
+    migrate = Migrate(app, db)
 
     from .routes import register_blueprints
-    register_blueprints(app)
-
-    with app.app_context():
-        db.create_all()
+    register_blueprints(app)   
+    if not app.config.get("TESTING", False):
+        with app.app_context():
+            db.create_all()
 
     @app.before_request
     def require_profile_completion():

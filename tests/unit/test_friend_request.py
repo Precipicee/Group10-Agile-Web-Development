@@ -7,15 +7,14 @@ from datetime import date
 from Fittrack import create_app, db
 from Fittrack.models import User, FriendRequest
 from werkzeug.security import generate_password_hash
+from Fittrack.config import TestConfig
 
 class FriendRequestTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        self.app.config['WTF_CSRF_ENABLED'] = False
-        self.app.config['LOGIN_DISABLED'] = True
+        self.app = create_app(TestConfig) 
         self.client = self.app.test_client()
+
+        
 
         with self.app.app_context():
             db.create_all()

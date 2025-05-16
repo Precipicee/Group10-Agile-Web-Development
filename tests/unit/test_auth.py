@@ -5,15 +5,13 @@ from datetime import date
 import unittest
 from Fittrack import create_app, db
 from Fittrack.models import User
+from Fittrack.config import TestConfig
 from werkzeug.security import generate_password_hash
 
 
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        self.app.config['WTF_CSRF_ENABLED'] = False  
+        self.app = create_app(TestConfig) 
         self.client = self.app.test_client()
 
         with self.app.app_context():
