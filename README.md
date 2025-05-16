@@ -61,13 +61,13 @@ To run all tests:
 2. Activate the virtual environment:
 
 ```bash
-source venv/bin/activate`
+source venv/bin/activate
 ```
 
 3. Run all tests:
 
 ```bash
-python -m unittest discover -s test -p "*test.py" -v
+python -m unittest discover -s tests -p "test_*.py"
 ```
 
 **Note:** Ensure it is run in the base directory so it can find the directory `./test` (it is a relative path, not absolute).
