@@ -55,15 +55,22 @@ WTF_CSRF_SECRET_KEY=csrf-secret-key
 
 ## Running the Unit and System Tests
 
-[@zachary insert unit tests here]
+To run all tests:
 
-To run the system tests:
-- You must have Google Chrome installed (version 124 or higher for compatibility with Selenium 4.32.0)
-- Run the following commands:
+1. Ensure Google Chrome and ChromeDriver (v124+) are installed.
+2. Activate the virtual environment:
 
-`source venv/bin/activate`
+```bash
+source venv/bin/activate`
+```
 
-`python -m unittest test/systemtest.py`
+3. Run all tests:
+
+```bash
+python -m unittest discover -s test -p "*test.py" -v
+```
+
+**Note:** Ensure it is run in the base directory so it can find the directory `./test` (it is a relative path, not absolute).
 
 ## Tutorial of the Website
 
