@@ -55,7 +55,6 @@ To run all tests:
 source venv/bin/activate
 ```
 
-```
 
 3. Run all tests:
 
