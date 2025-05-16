@@ -1,9 +1,11 @@
-document.addEventListener("DOMContentLoaded", () => {
+let weightChartInstance = null;
+
+function updateWeightChart(range = "week") {
   const pathParts = window.location.pathname.split('/');
   const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
 
-  let url = "/weight_data";
-  if (userId) url += `?user_id=${userId}`;
+  let url = `/weight_data?range=${range}`;
+  if (userId) url += `&user_id=${userId}`;
 
   fetch(url)
     .then(res => res.json())
@@ -12,12 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Failed to load weight data");
         return;
       }
+
+      // Update table
       const table = document.getElementById("weight-table-body");
       table.innerHTML = "";
-
-      const userHeight = parseFloat(result.height);
-      const targetWeight = parseFloat(result.target_weight);
-
       result.data.forEach(entry => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -27,45 +27,27 @@ document.addEventListener("DOMContentLoaded", () => {
         table.appendChild(row);
       });
 
+      // Update summary
       const weights = result.data.map(entry => entry.weight);
       const dates = result.data.map(entry => new Date(entry.date));
+      const userHeight = parseFloat(result.height);
+      const targetWeight = parseFloat(result.target_weight);
 
       const minWeight = Math.min(...weights);
       const maxWeight = Math.max(...weights);
-      const startingWeight = weights[0];
       const currentWeight = weights[weights.length - 1];
-      const oneMonthAgoDate = new Date();
-      oneMonthAgoDate.setMonth(oneMonthAgoDate.getMonth() - 1);
-
-      let weightOneMonthAgo = "N/A";
-      for (let i = weights.length - 1; i >= 0; i--) {
-        if (dates[i] <= oneMonthAgoDate) {
-          weightOneMonthAgo = weights[i];
-          break;
-        }
-      }
-
       document.getElementById("current-weight-big").textContent = currentWeight ? `${currentWeight} kg` : "N/A";
       document.getElementById("current-weight").textContent = currentWeight || "N/A";
       document.getElementById("target-weight").textContent = targetWeight || "N/A";
-      document.getElementById("weight-one-month-ago").textContent = weightOneMonthAgo;
 
       updateBMIProgress(currentWeight, userHeight);
 
-      const goalMessage = document.getElementById("goal-message");
-      if (currentWeight && targetWeight) {
-        const diff = Math.abs(currentWeight - targetWeight).toFixed(1);
-        if (diff < 0.1) {
-          goalMessage.innerHTML = 'Good job! You’ve reached your goal weight!';
-        } else if (diff < 2) {
-          goalMessage.innerHTML = `Almost there! You are <span class="gradient-text fw-bold">${diff} kg</span> away from your target weight.`;
-        } else {
-          goalMessage.innerHTML = `Keep going! You are <span class="gradient-text fw-bold">${diff} kg</span> away from your target weight.`;
-        }
-      }
-
+      // Update chart
       const ctx = document.getElementById("weight-chart").getContext("2d");
-      new Chart(ctx, {
+      if (weightChartInstance) {
+        weightChartInstance.destroy();
+      }
+      weightChartInstance = new Chart(ctx, {
         type: "line",
         data: {
           labels: result.data.map(entry => entry.date),
@@ -82,28 +64,43 @@ document.addEventListener("DOMContentLoaded", () => {
           maintainAspectRatio: false,
           scales: {
             x: {
-              title: {
-                display: true,
-                text: "Date"
-              }
+              title: { display: true, text: "Date" }
             },
             y: {
-              title: {
-                display: true,
-                text: "Weight (kg)"
-              },
+              title: { display: true, text: "Weight (kg)" },
               beginAtZero: false,
               min: Math.floor(minWeight / 5) * 5 - 5,
               max: Math.floor(maxWeight / 5) * 5 + 5,
-              ticks: {
-                stepSize: 5
-              }
+              ticks: { stepSize: 5 }
             }
           }
         }
       });
     });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const pathParts = window.location.pathname.split('/');
+  const userId = (pathParts[1] === 'shared_view') ? pathParts[2] : null;
+  const ranges = ["week", "month", "year"];
+  ranges.forEach(range => {
+    const btn = document.getElementById(`btn-weight-${range}`);
+    if (btn) {
+      btn.addEventListener("click", () => {
+        updateWeightChart(range);
+        // Set active class
+        ranges.forEach(r => {
+          const b = document.getElementById(`btn-weight-${r}`);
+          if (b) b.classList.remove("active");
+        });
+        btn.classList.add("active");
+      });
+    }
+  });
+
+  updateWeightChart("week");
 });
+
 
 function updateBMIProgress(currentWeight, userHeight) {
   const bmiLabel = document.getElementById("bmi-label");

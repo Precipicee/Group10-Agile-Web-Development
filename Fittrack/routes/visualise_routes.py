@@ -4,6 +4,7 @@ from Fittrack.models import User, DailyRecord, DailyExercise
 from flask_login import current_user, login_required
 from ..forms import ShareReportForm
 from ..models import FriendRequest
+from datetime import date, timedelta
 
 visualise_bp = Blueprint('visualise_bp', __name__)
 
@@ -34,8 +35,19 @@ def weight_data():
         user = User.query.get_or_404(user_id)
     else:
         user = current_user
+    range_option = request.args.get("range", "week")
+    today = date.today()
+    if range_option == "month":
+        start = today - timedelta(days=30)
+    elif range_option == "year":
+        start = today - timedelta(days=365)
+    else:  # default is week
+        start = today - timedelta(days=7)
 
-    records = DailyRecord.query.filter_by(user_id=user.user_id).order_by(DailyRecord.date.asc()).all()
+    records = DailyRecord.query.filter_by(user_id=user.user_id).filter(
+        DailyRecord.date >= start
+    ).order_by(DailyRecord.date.asc()).all()
+    
     return jsonify({
         'status': 'success',
         'height': user.height,
