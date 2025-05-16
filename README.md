@@ -70,7 +70,7 @@ python3 -m unittest discover -s tests/unit
 ```
 
 ```bash
-python -m unittest discover -s tests -p "test_*.py"
+python3 -m unittest discover -s tests/system
 ```
 
 **Note:** Ensure it is run in the base directory so it can find the directory `./test` (it is a relative path, not absolute).
