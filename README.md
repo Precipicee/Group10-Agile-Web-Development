@@ -53,6 +53,18 @@ WTF_CSRF_SECRET_KEY=csrf-secret-key
 
 ---
 
+## Running the Unit and System Tests
+
+[@zachary insert unit tests here]
+
+To run the system tests:
+- You must have Google Chrome installed (version 124 or higher for compatibility with Selenium 4.32.0)
+- Run the following commands:
+
+`source venv/bin/activate`
+
+`python -m unittest test/systemtest.py`
+
 ## Tutorial of the Website
 
 After getting the server to run and reaching the homepage on `http://127.0.0.1:5000`, you will be greeted with the `Home` page.
