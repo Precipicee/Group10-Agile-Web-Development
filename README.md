@@ -38,7 +38,7 @@ GitHub Copilot were used throughout this project to assist in development.
    ```env
    SECRET_KEY=
    WTF_CSRF_SECRET_KEY=
-   OPENAI_API_KEY=
+   OPENAI_API_KEY==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
    ```
 
 3. Make the run script executable and start the app:
