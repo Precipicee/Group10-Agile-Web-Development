@@ -1,3 +1,4 @@
+from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Date
 from flask_login import UserMixin
@@ -38,6 +39,8 @@ class User(db.Model, UserMixin):
 
     # One-to-many relationship
     records = db.relationship('DailyRecord', backref='user', lazy=True)
+    recommended_calories = db.Column(db.Float)
+    activity_level = db.Column(db.String(20))  # 'low', 'moderate', 'high'
 
     def get_id(self):
         return str(self.user_id) if self.user_id else None
@@ -68,8 +71,29 @@ class DailyRecord(db.Model):
 
     # New field: total calories - Migration
     total_calories = db.Column(db.Integer)
+    calories_burned = db.Column(db.Float, default=0.0)
+    daily_calorie_needs = db.Column(db.Float)
+    energy_gap = db.Column(db.Float)
     # One-to-many relationship: one record → many exercises
     exercises = db.relationship('DailyExercise', backref='record', lazy=True)
+    @staticmethod
+    def calculate_daily_calorie_need(weight, height, birthday, gender, activity_factor=1.55):
+        """
+        Use the Mifflin-St Jeor formula to calculate the daily heat demand
+        """
+        if not (weight and height and birthday and gender):
+            return None 
+
+        today = date.today()
+        age = today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+
+        if gender.lower() == 'male':
+            bmr = 10 * weight + 6.25 * height - 5 * age + 5
+        else:
+            bmr = 10 * weight + 6.25 * height - 5 * age - 161
+
+        return round(bmr * activity_factor, 1)
+
 
 
 class DailyExercise(db.Model):
@@ -116,7 +140,6 @@ class SharedAnalysis(db.Model):
     sender = db.relationship('User', foreign_keys=[sender_id], backref='shared_analyses_sent')
     receiver = db.relationship('User', foreign_keys=[receiver_id], backref='shared_analyses_received')
 
-from datetime import datetime
 
 
 class SharedReport(db.Model):
