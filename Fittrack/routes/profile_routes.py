@@ -4,7 +4,6 @@ from Fittrack.models import db, User, DailyRecord
 from Fittrack.forms import BasicInfoForm, ChangePasswordForm
 from Fittrack import csrf
 from flask_login import current_user, login_required
-from werkzeug.security import check_password_hash, generate_password_hash
 
 profile_bp = Blueprint('profile_bp', __name__)
 
@@ -169,11 +168,11 @@ def change_password():
         current = form.current_password.data
         new = form.new_password.data
 
-        if not check_password_hash(user.hashed_password, current):
+        if user.check_password(current):
             flash("Incorrect current password.", "danger")
             return render_template('change_password.html', form=form)
 
-        user.hashed_password = generate_password_hash(new)
+        user.set_password(new)
         db.session.commit()
         flash("Password changed successfully!", "success")
         return redirect(url_for('profile_bp.profile'))
