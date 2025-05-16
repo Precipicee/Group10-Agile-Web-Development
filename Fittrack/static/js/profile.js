@@ -27,20 +27,19 @@ function initProfilePage() {
   const editableFields = [
     { id: "profile-birthday", key: "birthday", type: "date" },
     { id: "profile-gender", key: "gender", type: "select" },
-    { id: "profile-height", key: "height", type: "number", unit: " cm" },
-    { id: "profile-weight-reg", key: "weight_reg", type: "number", unit: " kg" },
-    { id: "profile-weight-target", key: "target_weight", type: "number", unit: " kg" },
-    { id: "profile-target-weight-days", key: "target_weight_time_days", type: "number" },
-    { id: "profile-exercise-weekly", key: "target_exercise_time_per_week", type: "number" },
-    { id: "profile-exercise-days", key: "target_exercise_timeframe_days", type: "number" }
+    { id: "profile-height", key: "height", type: "number", unit: " cm", min: 1, step: 1 },
+    { id: "profile-weight-reg", key: "weight_reg", type: "number", unit: " kg", min: 0.01, step: 0.01 },
+    { id: "profile-weight-target", key: "target_weight", type: "number", unit: " kg", min: 0.01, step: 0.01 },
+    { id: "profile-target-weight-days", key: "target_weight_time_days", type: "number", min: 1, step: 1 },
+    { id: "profile-exercise-weekly", key: "target_exercise_time_per_week", type: "number", min: 1, step: 1 },
+    { id: "profile-exercise-days", key: "target_exercise_timeframe_days", type: "number", min: 1, step: 1 }
   ];
 
   editBtn.addEventListener("click", async () => {
     const editing = editBtn.textContent === "✏️";
-    editBtn.textContent = editing ? "💾" : "✏️";
 
     if (editing) {
-      // edit
+      editBtn.textContent = "💾";
       editableFields.forEach(field => {
         const container = document.getElementById(field.id);
         const value = window.profileOriginalData[field.key];
@@ -58,6 +57,9 @@ function initProfilePage() {
         } else {
           input = document.createElement("input");
           input.type = field.type;
+
+          if (field.min !== undefined) input.min = field.min;
+          if (field.step !== undefined) input.step = field.step;
 
           if (field.type === "date" && value) {
             const dateObj = new Date(value);
@@ -79,15 +81,24 @@ function initProfilePage() {
       // Save
       const payload = {};
 
-      editableFields.forEach(field => {
+      for (const field of editableFields) {
         const input = document.querySelector(`#${field.id} input, #${field.id} select`);
         if (input) {
           let val = input.value.trim();
-          if (field.type === "number") val = parseFloat(val);
+
+          if (field.type === "number") {
+            const floatVal = parseFloat(val);
+            if (field.min !== undefined && floatVal < field.min) {
+              alert(`${field.key} must be ≥ ${field.min}`);
+              return; //  Stop save if invalid
+            }
+            val = floatVal;
+          }
+
           payload[field.key] = val;
         }
-      });
-      
+      }
+
       console.log("Sending payload:", payload);
 
       const res = await fetch("/update_profile_fields", {
@@ -108,6 +119,7 @@ function initProfilePage() {
 
         Object.assign(window.profileOriginalData, payload);
         updateDisplayMode(window.profileOriginalData);
+        editBtn.textContent = "✏️";  
       } else {
         alert("Save failed: " + result.message);
         console.error(result.debug);
