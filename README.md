@@ -16,6 +16,12 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
 
 ---
 
+## Disclaimer about AI Usage
+
+AI (ChatGPT, GitHub Copilot) were used throughout this project to assist in development.
+
+---
+
 ## How to run the Application
 1. Create and activate a virtual environment:
    ```bash
