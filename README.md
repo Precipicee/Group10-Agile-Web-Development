@@ -43,6 +43,24 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
 Note: Please register your own API key via the OpenAI platform.
 ---
 
+## Running the Unit and System Tests
+
+To run all tests:
+
+1. Ensure Google Chrome and ChromeDriver (v124+) are installed.
+2. Activate the virtual environment:
+
+```bash
+source venv/bin/activate
+
+3. Run all tests:
+
+```bash
+python -m unittest discover -s test -p "*test.py" -v
+```
+
+**Note:** Ensure it is run in the base directory so it can find the directory `./test` (it is a relative path, not absolute).
+
 ## Tutorial of the Website
 
 After getting the server to run and reaching the homepage on `http://127.0.0.1:5000`, you will be greeted with the `Home` page.

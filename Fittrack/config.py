@@ -13,3 +13,6 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = False
+
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"

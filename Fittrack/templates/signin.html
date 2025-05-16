@@ -19,7 +19,7 @@
       {{ form.remember() }} Remember me
     </label>
 
-    {{ form.submit(class_="form-button") }}
+    {{ form.submit(class_="form-button", id="submit_btn") }}
 
     <p>No account? <a href="{{ url_for('auth_bp.signup') }}">Sign Up</a></p>
   </form>
