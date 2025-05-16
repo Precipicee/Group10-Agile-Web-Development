@@ -41,7 +41,8 @@ def share_report():
 
         if not is_friend:
             flash("You can only share reports with your friends.", "danger")
-            return redirect(request.referrer or url_for("main_routes.index"))
+            return redirect(request.referrer or url_for("main_bp.index"))
+
 
         new_share = SharedReport(
             sender_id=current_user.user_id,
@@ -55,7 +56,8 @@ def share_report():
     else:
         flash("Invalid form submission.", "danger")
 
-    return redirect(request.referrer or url_for("main_routes.index"))
+    return redirect(request.referrer or url_for("main_bp.index"))
+
 
 @share_bp.route("/delete_shared_report/<int:report_id>", methods=["POST"])
 @login_required

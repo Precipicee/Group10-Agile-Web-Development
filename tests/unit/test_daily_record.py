@@ -125,7 +125,7 @@ class DailyRecordTestCase(unittest.TestCase):
         date_str = (datetime.today().date() - timedelta(days=1)).strftime('%Y-%m-%d')
         self.submit_record(date_str)
         # Submit again with different data
-        self.client.post('/add_record', data={
+        response = self.client.post('/add_record', data={
             'date': date_str,
             'weight': 62,
             'breakfast': 'toast',
@@ -135,6 +135,7 @@ class DailyRecordTestCase(unittest.TestCase):
             'duration[]': ['20'],
             'intensity[]': ['light']
         }, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
 
         with self.app.app_context():
             record = DailyRecord.query.filter_by(user_id=self.user_id, date=datetime.strptime(date_str, '%Y-%m-%d').date()).first()
