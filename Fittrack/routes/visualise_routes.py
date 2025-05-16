@@ -200,14 +200,12 @@ def shared_reports():
         query = query.filter_by(report_type=report_type)
 
     reports = query.order_by(SharedReport.timestamp.desc()).all()
-    return render_template("shared_reports.html", reports=reports, selected_type=report_type)
+    return render_template("shared_reports.html", reports=reports, selected_type=report_type, timedelta=timedelta)
 
 @visualise_bp.route("/shared_view/<int:user_id>/<type>")
 @login_required
 def view_shared_report(user_id, type):
     user = User.query.get_or_404(user_id)
-
-    
     from ..forms import ShareReportForm
     from ..models import FriendRequest
 
@@ -221,8 +219,6 @@ def view_shared_report(user_id, type):
     ).first()
 
     form = ShareReportForm() if is_friend else None
-
-    
     if form:
         sent = FriendRequest.query.filter_by(from_user_id=current_user.user_id, status='accepted').all()
         received = FriendRequest.query.filter_by(to_user_id=current_user.user_id, status='accepted').all()
@@ -231,24 +227,18 @@ def view_shared_report(user_id, type):
         form.receiver_id.choices = [(f.user_id, f.username) for f in friends]
 
     if type == "weight":
-        
-        user = User.query.get_or_404(user_id)
-        
         return render_template("weight.html", shared_user=user, form=form)
-
     elif type == "exercise":
-        user = User.query.get_or_404(user_id)
-        
         return render_template("exercise.html", shared_user=user, form=form)
-
+    elif type == "diet":
+        shared_user = User.query.get_or_404(user_id)
+        return render_template("diet.html", shared_user=shared_user, form=form)
     else:
         return "Invalid report type", 400
 
 
-@visualise_bp.route("/report/diet")
-@login_required
-def diet_report():
-    return render_template("diet.html")
+
+
 
 def infer_calorie_goal(user):
     if user.current_weight is None or user.target_weight is None:
@@ -315,20 +305,44 @@ def calculate_recommended_calories(user):
 def recommended_calories():
     user = current_user
 
-    # Make sure all required profile fields exist
     if not all([user.age, user.height, user.current_weight, user.gender]):
         return jsonify({"error": "Incomplete profile"}), 400
 
-    calories = calculate_recommended_calories(user)
-    activity_level = infer_activity_level(user)
-    goal = infer_calorie_goal(user)
+    # URL
+    activity_param = request.args.get("activity", "").lower()
+    if activity_param not in ["low", "moderate", "high"]:
+        activity_param = "moderate"  # Default
+
+    # age
+    today = date.today()
+    age = user.age if hasattr(user, "age") else today.year - user.birthday.year - (
+        (today.month, today.day) < (user.birthday.month, user.birthday.day)
+    )
+
+    gender = user.gender.strip().lower()
+    if gender == 'male':
+        bmr = 10 * user.current_weight + 6.25 * user.height - 5 * age + 5
+    elif gender == 'female':
+        bmr = 10 * user.current_weight + 6.25 * user.height - 5 * age - 161
+    else:
+        bmr = 10 * user.current_weight + 6.25 * user.height - 5 * age - 78
+
+    # Use activity parameters to calculate recommended calories
+    activity_map = {
+        "low": 1.2,
+        "moderate": 1.55,
+        "high": 1.9
+    }
+    multiplier = activity_map.get(activity_param, 1.55)
+    recommended = round(bmr * multiplier)
 
     return jsonify({
-        "recommended": calories,
-        "age": user.age,
+        "recommended": recommended,
+        "age": age,
         "height": user.height,
         "current_weight": user.current_weight,
         "gender": user.gender,
-        "goal": goal,
-        "activity_level": activity_level
+        "goal": "lose weight" if user.current_weight > user.target_weight else "maintain",
+        "activity_level": activity_param
     })
+

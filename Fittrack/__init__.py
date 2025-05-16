@@ -4,6 +4,9 @@ from .models import db, User
 from .config import Config
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
+from dotenv import load_dotenv   
+
+load_dotenv()
 
 csrf = CSRFProtect()
 login_manager = LoginManager()
@@ -36,6 +39,8 @@ def create_app(config_class=Config):
             if not current_user.is_profile_complete:
                 if request.endpoint not in allowed_routes and not request.path.startswith("/static"):
                     return redirect(url_for('profile_bp.basicinfo'))
+
+    print("CSRF Protection is enabled:", app.config.get("WTF_CSRF_ENABLED", True))
 
     return app
 

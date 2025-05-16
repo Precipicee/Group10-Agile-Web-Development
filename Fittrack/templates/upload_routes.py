@@ -21,6 +21,7 @@ def add_record():
     form_data = request.form.to_dict(flat=True)
     session['pending_record'] = form_data
 
+    # 获取原始输入
     exercises = request.form.getlist('exercise[]')
     durations = request.form.getlist('duration[]')
     intensities = request.form.getlist('intensity[]')
@@ -54,6 +55,7 @@ def add_record():
         lunch = form_data.get('lunch')
         dinner = form_data.get('dinner')
 
+        # 估算摄入热量
         meal_description = f"""
         User Info:
         - Gender: {user.gender or 'unspecified'}
@@ -66,6 +68,7 @@ def add_record():
         """.strip()
         estimated_calories = estimate_calories_from_meal(meal_description)
 
+        # 计算日常需求
         daily_need = DailyRecord.calculate_daily_calorie_need(
             weight=weight,
             height=user.height,
@@ -73,7 +76,7 @@ def add_record():
             gender=user.gender
         )
 
-        # Handle sports information
+        # 处理运动信息（只保留完整的）
         exercise_list = []
         incomplete_count = 0
         for i in range(len(exercises)):
@@ -91,9 +94,9 @@ def add_record():
                 except Exception:
                     incomplete_count += 1
             elif name or dur or intensity:
-                incomplete_count += 1  # Partial filling is also considered incomplete.
+                incomplete_count += 1  # 部分填写也视为不完整
 
-        # Calculate the heat consumption (estimate only when all fields are complete)
+        # 计算消耗热量（仅在所有字段齐全时才估算）
         if exercise_list:
             estimated_burned = estimate_calories_from_exercise(exercise_list)
             print(f"[INFO] Estimated exercise calories burned: {estimated_burned}")
@@ -101,10 +104,10 @@ def add_record():
             estimated_burned = 0.0
             print("[INFO] No valid exercises. Calories burned set to 0.")
 
-        # Calculate the energy difference
+        # 计算能量差值
         energy_gap = estimated_calories - daily_need - estimated_burned if estimated_calories and daily_need is not None else None
 
-        # Save the main record
+        # 保存主记录
         record = DailyRecord(
             user_id=user.user_id,
             date=record_date,
@@ -120,7 +123,7 @@ def add_record():
         db.session.add(record)
         db.session.commit()
 
-        # Save exercise data
+        # 保存运动数据
         for ex in exercise_list:
             db.session.add(DailyExercise(
                 record_id=record.record_id,
@@ -130,13 +133,13 @@ def add_record():
             ))
         db.session.commit()
 
-        # User tips
+        # 用户提示
         if incomplete_count > 0:
             flash("Record saved successfully, but some incomplete exercise entries were ignored.", "warning")
         else:
             flash("Record saved successfully!", "success")
 
-        # refresh session
+        # 更新 session
         session['pending_record'] = {
             'breakfast': breakfast,
             'lunch': lunch,

@@ -80,7 +80,6 @@
         </tbody>
       </table>
 
-
       <table id="exercise-table" class="details-table">
         <thead>
           <tr>
@@ -97,15 +96,77 @@
         </tbody>
       </table>
 
+      <table id="calorie-summary" class="details-table">
+        <thead>
+          <tr>
+            <th colspan="4">🔥 Estimated Calories</th>
+          </tr>
+          <tr>
+            <th>Intake<br>Calories</th>
+            <th>Burned Calories</th>
+            <th>Daily Calorie<br>Need</th>
+            <th>Energy<br>Gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong id="mealCalories">{{ form_data.get('total_calories', '—') }} kcal</strong></td>
+            <td><strong id="burnedCalories">{{ form_data.get('calories_burned', '—') }} kcal</strong></td>
+            <td><strong id="dailyNeed">{{ form_data.get('daily_calorie_needs', '—') }} kcal</strong></td>
+            <td>
+              {% set gap = form_data.get('energy_gap') %}
+              <strong id="energyGap" style="color: 
+                {% if gap is not none and gap > 0 %}
+                  #d32f2f
+                {% elif gap is not none and gap < 0 %}
+                  #388e3c
+                {% else %}
+                  #333
+                {% endif %}
+              ">
+                {{ "%.1f"|format(gap) if gap is not none else '—' }} kcal
+              </strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="details-table" id="summary-table" style="margin-top: 1.5rem;">
+        <thead>
+          <tr>
+            <th>📋 Daily Summary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-size: 1.05rem; font-weight: 500; color:
+              {% set gap = form_data.get('energy_gap') %}
+              {% if gap is not none and gap > 0 %}
+                #d32f2f
+              {% elif gap is not none and gap <= 0 %}
+                #388e3c
+              {% else %}
+                #666
+              {% endif %}
+            ">
+              {% if gap is none %}
+                ⏳ No record yet. Submit today’s record to get personalized analysis!
+              {% elif gap > 0 %}
+                🍕 You consumed more than you burned today. <br>Keep working on your goal!
+              {% else %}
+                💪 Great job! You've created a calorie deficit today. <br>Keep it up!
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
     </div>
   </div>
-
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
-
-
 {% endblock %}

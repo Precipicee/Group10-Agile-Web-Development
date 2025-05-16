@@ -30,8 +30,9 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
 
    Add the following lines:
    ```env
-   SECRET_KEY=group10
-   WTF_CSRF_SECRET_KEY=csrf-secret-key
+   SECRET_KEY=
+   WTF_CSRF_SECRET_KEY=
+   OPENAI_API_KEY=
    ```
 
 3. Make the run script executable and start the app:
@@ -39,18 +40,7 @@ FitTrack is a simple, user-friendly fitness tracker web application developed fo
    chmod +x run.sh
    ./run.sh
    ```
-
----
-
-## Environment Configuration (`.env`)
-
-The application uses a `.env` file to store sensitive configuration variables. At a minimum, the `.env` file must include:
-
-```env
-SECRET_KEY=group10
-WTF_CSRF_SECRET_KEY=csrf-secret-key
-```
-
+Note: Please register your own API key via the OpenAI platform.
 ---
 
 ## Running the Unit and System Tests
