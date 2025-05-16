@@ -5,13 +5,19 @@ from selenium.webdriver.support import expected_conditions
 
 class EditProfileTest(BaseSystemTestCase):
     def test_edit_profile(self):
-        self.signup_user("edituser", "Editpass1", email="edituser@example.com")
+        self.signup_user("edituser", "Ed1tp@55!", email="edituser@example.com")
         self.driver.get(f"{self.BASE_URL}/signin")
         self.driver.find_element(By.ID, "username").send_keys("edituser")
-        self.driver.find_element(By.ID, "password").send_keys("Editpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Ed1tp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
+        # Wait for the profile page to load
+        WebDriverWait(self.driver, 10).until(
+            expected_conditions.text_to_be_present_in_element(
+                (By.CSS_SELECTOR, ".navbar__user .navbar__links"), "edituser"
+            )
+        )
         self.driver.get(f"{self.BASE_URL}/profile")
 
         WebDriverWait(self.driver, 10).until(
@@ -55,10 +61,10 @@ class EditProfileTest(BaseSystemTestCase):
         self.assertIn("70", self.driver.find_element(By.ID, "profile-weight-target").text)
     
     def test_edit_profile_invalid_height(self):
-        self.signup_user("edituser3", "Editpass1", email="edituser3@example.com")
+        self.signup_user("edituser3", "Ed1tp@55!", email="edituser3@example.com")
         self.driver.get(f"{self.BASE_URL}/signin")
         self.driver.find_element(By.ID, "username").send_keys("edituser3")
-        self.driver.find_element(By.ID, "password").send_keys("Editpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Ed1tp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
@@ -88,10 +94,10 @@ class EditProfileTest(BaseSystemTestCase):
 
     # Can be reworked to check for height too.
     def test_edit_profile_negative_weight(self):
-        self.signup_user("edituser4", "Editpass1", email="edituser4@example.com")
+        self.signup_user("edituser4", "Ed1tp@55!", email="edituser4@example.com")
         self.driver.get(f"{self.BASE_URL}/signin")
         self.driver.find_element(By.ID, "username").send_keys("edituser4")
-        self.driver.find_element(By.ID, "password").send_keys("Editpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Ed1tp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)

@@ -5,13 +5,13 @@ from selenium.webdriver.support import expected_conditions
 
 class SignInTest(BaseSystemTestCase):
     def test_signin_process(self):
-        self.signup_user("testuser", "Testpass1")
+        self.signup_user("testuser", "Te5Tp@55!")
         self.driver.get("http://localhost:5000/signin")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.element_to_be_clickable((By.ID, "username"))
         )
         self.driver.find_element(By.ID, "username").send_keys("testuser")
-        self.driver.find_element(By.ID, "password").send_keys("Testpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Te5Tp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
@@ -21,13 +21,13 @@ class SignInTest(BaseSystemTestCase):
         self.assertIn("Log Out", self.driver.page_source)
 
     def test_signin_wrong_username(self):
-        self.signup_user("testuser", "Testpass1")
+        self.signup_user("testuser", "Te5Tp@55!")
         self.driver.get("http://localhost:5000/signin")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.element_to_be_clickable((By.ID, "username"))
         )
         self.driver.find_element(By.ID, "username").send_keys("wronguser")
-        self.driver.find_element(By.ID, "password").send_keys("Testpass1")
+        self.driver.find_element(By.ID, "password").send_keys("Te5Tp@55!")
         submit_btn = self.driver.find_element(By.ID, "submit_btn")
         self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_btn)
         self.driver.execute_script("arguments[0].click();", submit_btn)
@@ -37,7 +37,7 @@ class SignInTest(BaseSystemTestCase):
         self.assertIn("Invalid username or password", self.driver.page_source)
 
     def test_signin_wrong_password(self):
-        self.signup_user("testuser", "Testpass1")
+        self.signup_user("testuser", "Te5Tp@55!")
         self.driver.get("http://localhost:5000/signin")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.element_to_be_clickable((By.ID, "username"))

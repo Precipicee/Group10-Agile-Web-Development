@@ -21,11 +21,11 @@ class SharingTest(BaseSystemTestCase):
 
     def test_share_report(self):
         # Register two users
-        self.signup("shareuser1", "Sharepass1", email="shareuser1@example.com")
-        self.signup("shareuser2", "Sharepass2", email="shareuser2@example.com")
+        self.signup("shareuser1", "5h4REp@551", email="shareuser1@example.com")
+        self.signup("shareuser2", "5h4REp@552", email="shareuser2@example.com")
 
         # User1 logs in and sends a friend request to user2
-        self.login("shareuser1", "Sharepass1")
+        self.login("shareuser1", "5h4REp@551")
         self.driver.get(f"{self.BASE_URL}/friends")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.ID, "friend-username"))
@@ -39,7 +39,7 @@ class SharingTest(BaseSystemTestCase):
         self.driver.get(f"{self.BASE_URL}/logout")
 
         # User2 logs in and accepts the friend request
-        self.login("shareuser2", "Sharepass2")
+        self.login("shareuser2", "5h4REp@552")
         self.driver.get(f"{self.BASE_URL}/friends")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.CLASS_NAME, "btn-accept"))
@@ -57,7 +57,7 @@ class SharingTest(BaseSystemTestCase):
         self.driver.get(f"{self.BASE_URL}/logout")
 
         # User1 logs in, uploads a record, and shares the report with user2
-        self.login("shareuser1", "Sharepass1")
+        self.login("shareuser1", "5h4REp@551")
         self.driver.get(f"{self.BASE_URL}/upload")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.ID, "recordForm"))
@@ -117,7 +117,7 @@ class SharingTest(BaseSystemTestCase):
         self.driver.get(f"{self.BASE_URL}/logout")
 
         # User2 logs in and checks for the shared report
-        self.login("shareuser2", "Sharepass2")
+        self.login("shareuser2", "5h4REp@552")
         self.driver.get(f"{self.BASE_URL}/shared_reports")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.CLASS_NAME, "shared-report-card"))
