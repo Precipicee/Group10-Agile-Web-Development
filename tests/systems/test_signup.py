@@ -1,4 +1,4 @@
-from tests.system.test_base import BaseSystemTestCase
+from tests.systems.test_base import BaseSystemTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
