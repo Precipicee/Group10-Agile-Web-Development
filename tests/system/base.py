@@ -40,11 +40,10 @@ class BaseSystemTestCase(unittest.TestCase):
         })
 
         self.driver = webdriver.Chrome(options=options)
-
-        return super().setUp()
-
+        super().setUp()
+    
     def signup_user(self, username, password, email="test@example.com"):
-        self.driver.get("http://localhost:5000/signup")
+        self.driver.get(f"{self.BASE_URL}/signup")
         WebDriverWait(self.driver, 10).until(
             expected_conditions.presence_of_element_located((By.ID, "username"))
         )

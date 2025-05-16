@@ -13,4 +13,4 @@ source application-env/bin/activate
 pip install -r requirements.txt
 
 # Run the Flask app
-python3 run.py
+python3 app.py

@@ -6,6 +6,7 @@ dotenv_path = Path(__file__).resolve().parents[1] / ".env"
 load_dotenv(dotenv_path)
 
 class Config:
+    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
     SECRET_KEY = os.getenv("SECRET_KEY")
     WTF_CSRF_SECRET_KEY = os.getenv("WTF_CSRF_SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///users.db")
@@ -14,4 +15,4 @@ class Config:
     SESSION_COOKIE_SECURE = False
 
 class TestingConfig(Config):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:test.db"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"

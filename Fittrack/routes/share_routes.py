@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 from .. import db
 from ..models import SharedReport, FriendRequest, User
 from ..forms import ShareReportForm
+
 import logging
 
 share_bp = Blueprint("share_bp", __name__)
@@ -55,3 +56,17 @@ def share_report():
         flash("Invalid form submission.", "danger")
 
     return redirect(request.referrer or url_for("main_routes.index"))
+
+@share_bp.route("/delete_shared_report/<int:report_id>", methods=["POST"])
+@login_required
+def delete_shared_report(report_id):
+    report = SharedReport.query.get_or_404(report_id)
+
+    if report.receiver_id != current_user.user_id:
+        flash("You are not authorized to delete this report.", "danger")
+        return redirect(url_for("visualise_bp.shared_reports"))
+
+    db.session.delete(report)
+    db.session.commit()
+    flash("Shared report deleted successfully.", "success")
+    return redirect(url_for("visualise_bp.shared_reports"))
