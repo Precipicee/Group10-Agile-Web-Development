@@ -1,7 +1,4 @@
 import openai
-import os
-print("✔️ ENV loaded? OPENAI_API_KEY =", os.getenv("OPENAI_API_KEY"))
-
 import re
 from flask import current_app
 
@@ -33,18 +30,16 @@ def estimate_calories_from_meal(meal_description: str) -> float:
             temperature=0,
         )
         result = response['choices'][0]['message']['content']
-        print("[DEBUG] GPT Raw Result:", result)
+        
 
 
         match = re.search(r"\d+(\.\d+)?", result)
         if match:
             return float(match.group(0))
         else:
-            print("[WARN] No number found in GPT response.")
             return -1.0
 
-    except Exception as e:
-        print(f"[ERROR] GPT API Failed:", e)
+    except Exception:
         return -1.0
 
 
@@ -79,13 +74,11 @@ def estimate_calories_from_exercise(exercise_list: list) -> float:
             temperature=0,
         )
         result = response['choices'][0]['message']['content']
-        print("[DEBUG] GPT EXERCISE Result:", result)
 
         match = re.search(r"\d+(\.\d+)?", result)
         if match:
             return float(match.group(0))
         else:
-            print("[WARN] No number found in GPT response.")
             return -1.0
 
     except Exception as e:
